@@ -30,42 +30,68 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Debug APK
-        continue-on-error: true
         run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Verify Debug APK
+        run: |
+          echo "=== Debug APK Verification ==="
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            ls -lh app/build/outputs/apk/debug/app-debug.apk
+            file app/build/outputs/apk/debug/app-debug.apk
+            echo "✓ Debug APK generated successfully"
+          else
+            echo "✗ Debug APK not found!"
+            echo "Contents of app/build/outputs:"
+            find app/build/outputs -type f 2>/dev/null || echo "No outputs found"
+            exit 1
+          fi
 
       - name: Upload Debug APK to Artifacts
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: fish-audio-tts-debug
           path: app/build/outputs/apk/debug/
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Run Unit Tests
-        continue-on-error: true
         run: ./gradlew test --no-daemon --stacktrace
 
       - name: Build Release APK (unsigned)
-        continue-on-error: true
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Check for APK files
+      - name: Verify Release APK
         run: |
-          echo "Checking for generated APK files..."
+          echo "=== Release APK Verification ==="
+          if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+            ls -lh app/build/outputs/apk/release/app-release-unsigned.apk
+            file app/build/outputs/apk/release/app-release-unsigned.apk
+            echo "✓ Release APK generated successfully"
+          else
+            echo "✗ Release APK not found!"
+            echo "Contents of app/build/outputs:"
+            find app/build/outputs -type f 2>/dev/null || echo "No outputs found"
+            exit 1
+          fi
+
+      - name: Generate Build Summary
+        run: |
+          echo "=== Complete APK Summary ==="
+          echo "All APK files found:"
+          find app/build/outputs -name "*.apk" -type f -exec ls -lh {} \;
           echo ""
-          echo "=== Looking for all APK files ==="
-          find app/build -name "*.apk" -type f 2>/dev/null | head -20 || echo "No APKs found"
+          echo "=== Build Environment ==="
+          echo "JDK version:"
+          java -version
           echo ""
-          echo "=== app/build directory structure ==="
-          ls -la app/build/outputs/ 2>/dev/null || echo "No outputs directory"
+          echo "Gradle version:"
+          ./gradlew --version
 
       - name: Upload Release APK to Artifacts
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: fish-audio-tts-release
           path: app/build/outputs/apk/release/
-          if-no-files-found: warn
+          if-no-files-found: error
 
   release:
     name: Create Release
