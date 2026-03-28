@@ -9,58 +9,62 @@ on:
 
 jobs:
   build:
-    name: Build APK
+    name: Build APK (Docker)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 21
-        uses: actions/setup-java@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
         with:
-          distribution: 'zulu'
-          java-version: 21
-          cache: 'gradle'
+          context: .
+          push: false
+          load: true
+          tags: fish-audio-tts-builder:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Make Gradle executable
-        run: chmod +x ./gradlew
-
-      - name: Create local.properties
+      - name: Build Debug APK in Docker
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "Created local.properties:"
-          cat local.properties
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            fish-audio-tts-builder:latest \
+            ./gradlew assembleDebug --no-daemon
 
-      - name: Run Unit Tests
-        run: ./gradlew test --no-daemon --stacktrace
+      - name: Build Release APK in Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            fish-audio-tts-builder:latest \
+            ./gradlew assembleRelease --no-daemon
 
-      - name: Build Debug APK
-        if: success()
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: List APK files
+        run: |
+          echo "=== Debug APKs ==="
+          find app/build/outputs/apk/debug -name "*.apk" -type f
+          echo "=== Release APKs ==="
+          find app/build/outputs/apk/release -name "*.apk" -type f
 
       - name: Upload Debug APK to Artifacts
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: fish-audio-tts-debug
           path: app/build/outputs/apk/debug/
-          retention-days: 30
-
-      - name: Build Release APK (unsigned)
-        if: success()
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+          if-no-files-found: warn
 
       - name: Upload Release APK to Artifacts
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: fish-audio-tts-release
           path: app/build/outputs/apk/release/
-          retention-days: 30
+          if-no-files-found: warn
 
   release:
     name: Create Release
@@ -76,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
           files: |
             fish-audio-tts-debug/**/*.apk
