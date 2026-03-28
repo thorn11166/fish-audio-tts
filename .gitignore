@@ -1,0 +1,81 @@
+# Gradle
+.gradle/
+build/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.so
+
+# Android Studio
+.idea/
+.vs/
+.vscode/
+*.iml
+*.iws
+*.ipr
+local.properties
+.DS_Store
+
+# Kotlin
+*.kt.bak
+*.kd.bak
+
+# Environment
+.env
+.env.local
+
+# Secrets
+**/secret/
+**/secrets/
+
+# Compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+*.txt
+
+# Generated files
+.classpath
+.project
+.settings/
+gen/
+out/
+
+# Backup files
+*.bak
+*~
+*.swp
+
+# IDE
+.sublime-*
+*.sublime-*
+*.orig
+
+# OS
+Thumbs.db
+.thumbs.db
+
+# Distribution files
+dist/
+release/
+
+# Signing
+*.keystore
+*.jks
+
+# Cache
+.cache/
+**/cache/
+
+# Test
+**/coverage/
+**/reports/
+
+# Temporary
+.tmp/
+temp/
