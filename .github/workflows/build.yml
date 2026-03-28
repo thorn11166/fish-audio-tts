@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload Debug APK to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: fish-audio-tts-debug
           path: app/build/outputs/apk/debug/
@@ -44,7 +44,7 @@ jobs:
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload Release APK to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: fish-audio-tts-release
           path: app/build/outputs/apk/release/
@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download APKs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
