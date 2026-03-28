@@ -41,8 +41,8 @@ jobs:
           if-no-files-found: warn
 
       - name: Run Unit Tests
-        run: ./gradlew test --no-daemon --stacktrace
         continue-on-error: true
+        run: ./gradlew test --no-daemon --stacktrace
 
       - name: Build Release APK (unsigned)
         run: ./gradlew assembleRelease --no-daemon --stacktrace
