@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fish-audio-tts-builder
+    volumes:
+      - .:/workspace
+      - gradle-cache:/root/.gradle
+      - android-sdk-cache:/opt/android-sdk
+    environment:
+      - GRADLE_USER_HOME=/root/.gradle
+      - ANDROID_HOME=/opt/android-sdk
+    working_dir: /workspace
+    # Allow overriding the gradle command via docker-compose run
+    entrypoint: ./gradlew
+    command: ["build"]
+
+volumes:
+  gradle-cache:
+    driver: local
+  android-sdk-cache:
+    driver: local
