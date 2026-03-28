@@ -25,28 +25,37 @@ jobs:
 
       - name: Setup Android SDK
         run: |
+          set -e
+          
           # Create Android SDK directory
           mkdir -p $ANDROID_HOME/cmdline-tools
           
           # Download Android SDK Command-line Tools
           cd /tmp
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          echo "Downloading Android SDK command-line tools..."
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          
+          echo "Extracting Android SDK command-line tools..."
           unzip -q commandlinetools-linux-11076708_latest.zip
+          
+          echo "Moving to Android SDK directory..."
           mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           
           # Accept licenses
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+          echo "Accepting Android licenses..."
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           
           # Install required SDK components
+          echo "Installing SDK components..."
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            --no_https \
             "platform-tools" \
             "platforms;android-34" \
-            "build-tools;34.0.0" > /dev/null 2>&1
+            "build-tools;34.0.0"
           
           # Set PATH
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
+          echo "Android SDK setup complete"
 
       - name: Make Gradle executable
         run: chmod +x ./gradlew
