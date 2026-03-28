@@ -49,6 +49,16 @@ jobs:
         continue-on-error: true
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
+      - name: Check for APK files
+        run: |
+          echo "Checking for generated APK files..."
+          echo ""
+          echo "=== Looking for all APK files ==="
+          find app/build -name "*.apk" -type f 2>/dev/null | head -20 || echo "No APKs found"
+          echo ""
+          echo "=== app/build directory structure ==="
+          ls -la app/build/outputs/ 2>/dev/null || echo "No outputs directory"
+
       - name: Upload Release APK to Artifacts
         uses: actions/upload-artifact@v4
         if: always()
