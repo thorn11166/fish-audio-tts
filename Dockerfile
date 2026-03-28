@@ -36,25 +36,25 @@ RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses && \
     "platforms;android-34" \
     "build-tools;34.0.0"
 
-# Download and install Gradle 8.5
-RUN cd /opt && \
-    wget https://services.gradle.org/distributions/gradle-8.5-bin.zip && \
-    unzip -q gradle-8.5-bin.zip && \
-    rm gradle-8.5-bin.zip && \
-    ln -s /opt/gradle-8.5/bin/gradle /usr/local/bin/gradle
-
-ENV GRADLE_HOME=/opt/gradle-8.5 \
-    PATH=${GRADLE_HOME}/bin:$PATH
-
 # Set working directory
 WORKDIR /workspace
 
-# Copy project files
-COPY . .
+# Copy gradle wrapper files first
+COPY gradle gradle
+COPY gradlew gradlew
+COPY gradlew.bat gradlew.bat
+COPY gradle.properties gradle.properties
+COPY settings.gradle.kts settings.gradle.kts
+COPY build.gradle.kts build.gradle.kts
 
 # Grant execute permissions to gradlew
 RUN chmod +x gradlew
 
-# Entry point for gradle builds (use system gradle instead of wrapper)
-ENTRYPOINT ["gradle"]
-CMD ["--help"]
+# Download gradle wrapper dependencies
+RUN ./gradlew --version
+
+# Copy remaining project files
+COPY . .
+
+# Default command - can be overridden when running container
+CMD ["/bin/bash"]
