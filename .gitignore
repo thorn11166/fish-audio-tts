@@ -35,6 +35,9 @@ local.properties
 *.war
 *.ear
 
+# Exception: gradle-wrapper.jar is needed for CI/CD
+!gradle/wrapper/gradle-wrapper.jar
+
 # Log files
 *.log
 *.txt
