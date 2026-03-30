@@ -28,7 +28,17 @@ jobs:
         run: chmod +x ./gradlew
       
       - name: Build Debug APK
-        run: ./gradlew clean assembleDebug
+        run: |
+          ./gradlew --version
+          ./gradlew clean assembleDebug --stacktrace --info 2>&1 | tee build.log || true
+          
+      - name: Show build errors
+        if: failure()
+        run: |
+          echo "=== Build Log ==="
+          tail -100 build.log
+          echo "=== Gradle Properties ==="
+          cat gradle.properties
       
       - name: Check APK exists
         run: |
