@@ -1,7 +1,7 @@
 package com.example.fishaudiotts.ui.theme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkMode
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -65,7 +65,7 @@ val neonGradient = Brush.linearGradient(
 
 @Composable
 fun FishAudioTTSTheme(
-    darkTheme: Boolean = isSystemInDarkMode(),
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else DarkColorScheme
