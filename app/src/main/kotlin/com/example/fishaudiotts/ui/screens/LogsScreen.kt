@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -122,21 +123,23 @@ fun LogsScreen(
         }
         
         // Logs content
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
-                .background(CyberPurple.copy(alpha = 0.3f))
-                .padding(12.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = logs,
-                fontSize = 11.sp,
-                color = VapText,
-                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-            )
+        SelectionContainer {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
+                    .background(CyberPurple.copy(alpha = 0.3f))
+                    .padding(12.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = logs,
+                    fontSize = 11.sp,
+                    color = VapText,
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                )
+            }
         }
     }
 }
