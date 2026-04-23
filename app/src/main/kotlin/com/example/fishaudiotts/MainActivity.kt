@@ -40,8 +40,6 @@ class MainActivity : ComponentActivity() {
         logger = FileLogger.getInstance(this)
         logger.i("MainActivity", "App starting...")
         
-        try {
-        
         setContent {
             FishAudioTTSTheme {
                 val navController = rememberNavController()
@@ -125,9 +123,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        } catch (e: Exception) {
-            logger.e("MainActivity", "Fatal error in onCreate", e)
-            throw e
+        }
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::logger.isInitialized) {
+            logger.i("MainActivity", "App shutting down")
         }
     }
     
