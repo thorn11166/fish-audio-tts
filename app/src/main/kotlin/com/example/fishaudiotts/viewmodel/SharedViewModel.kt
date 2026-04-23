@@ -22,7 +22,7 @@ class SharedViewModel(context: Context) : ViewModel() {
     
     private val preferencesManager = PreferencesManager(context)
     private val database = AppDatabase.getInstance(context)
-    private lateinit var repository: VoiceRepository
+    private var repository: VoiceRepository? = null
     
     private val _isApiConfigured = MutableStateFlow(false)
     val isApiConfigured: StateFlow<Boolean> = _isApiConfigured
@@ -64,17 +64,24 @@ class SharedViewModel(context: Context) : ViewModel() {
             
             // Initialize repository
             if (!apiKey.isNullOrEmpty()) {
-                val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel())
-                repository = VoiceRepository(database, apiClient)
+                initRepository(apiKey)
                 
                 // Load default voice
-                repository.getDefaultVoice().collect { voice ->
+                repository?.getDefaultVoice()?.collect { voice ->
                     _defaultVoice.value = voice
                 }
             }
             
             _currentTtsModel.value = preferencesManager.getTtsModel()
         }
+    }
+    
+    /**
+     * Initialize repository with API key
+     */
+    private fun initRepository(apiKey: String) {
+        val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel())
+        repository = VoiceRepository(database, apiClient)
     }
     
     /**
@@ -87,11 +94,10 @@ class SharedViewModel(context: Context) : ViewModel() {
             
             try {
                 // Create client and validate
-                val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel())
-                repository = VoiceRepository(database, apiClient)
+                initRepository(apiKey)
                 
                 // Validate key
-                val isValid = repository.validateApiKey()
+                val isValid = repository?.validateApiKey() ?: false
                 if (isValid) {
                     preferencesManager.setApiKey(apiKey)
                     _isApiConfigured.value = true
@@ -139,12 +145,24 @@ class SharedViewModel(context: Context) : ViewModel() {
                 _errorMessage.value = "API key not configured"
                 return@launch
             }
+            
+            // Initialize repository if needed
+            val apiKey = preferencesManager.getApiKey()
+            if (repository == null && !apiKey.isNullOrEmpty()) {
+                initRepository(apiKey)
+            }
+            
+            val repo = repository
+            if (repo == null) {
+                _errorMessage.value = "Repository not initialized"
+                return@launch
+            }
 
             _isSearching.value = true
             _errorMessage.value = null
 
             try {
-                val result = repository.searchVoices(
+                val result = repo.searchVoices(
                     query = query.ifEmpty { null },
                     page = 1,
                     perPage = 20
@@ -171,6 +189,18 @@ class SharedViewModel(context: Context) : ViewModel() {
                 _errorMessage.value = "API key not configured"
                 return@launch
             }
+            
+            // Initialize repository if needed
+            val apiKey = preferencesManager.getApiKey()
+            if (repository == null && !apiKey.isNullOrEmpty()) {
+                initRepository(apiKey)
+            }
+            
+            val repo = repository
+            if (repo == null) {
+                _errorMessage.value = "Repository not initialized"
+                return@launch
+            }
 
             // Stop if already playing this voice
             if (_currentlyPlayingVoiceId.value == voiceId && audioPlayer.isPlaying()) {
@@ -182,7 +212,7 @@ class SharedViewModel(context: Context) : ViewModel() {
             _errorMessage.value = null
 
             try {
-                val result = repository.generateVoicePreview(voiceId)
+                val result = repo.generateVoicePreview(voiceId)
                 result.onSuccess { audioStream ->
                     audioPlayer.playPreview(audioStream) {
                         // On complete
