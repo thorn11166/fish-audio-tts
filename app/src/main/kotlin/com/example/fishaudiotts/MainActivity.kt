@@ -13,9 +13,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fishaudiotts.ui.screens.CustomVoicesScreen
 import com.example.fishaudiotts.ui.screens.HomeScreen
+import com.example.fishaudiotts.ui.screens.LogsScreen
 import com.example.fishaudiotts.ui.screens.SettingsScreen
 import com.example.fishaudiotts.ui.screens.VoiceDiscoveryScreen
 import com.example.fishaudiotts.ui.theme.FishAudioTTSTheme
+import com.example.fishaudiotts.util.CrashHandler
+import com.example.fishaudiotts.util.FileLogger
 import com.example.fishaudiotts.viewmodel.SettingsViewModel
 import com.example.fishaudiotts.viewmodel.SharedViewModel
 
@@ -24,8 +27,20 @@ import com.example.fishaudiotts.viewmodel.SharedViewModel
  * Handles navigation, deep linking, and theme initialization
  */
 class MainActivity : ComponentActivity() {
+    
+    private lateinit var logger: FileLogger
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Install crash handler
+        CrashHandler.install(this)
+        
+        // Initialize logger
+        logger = FileLogger.getInstance(this)
+        logger.i("MainActivity", "App starting...")
+        
+        try {
         
         setContent {
             FishAudioTTSTheme {
@@ -57,6 +72,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onNavigateToSettings = {
                                 navController.navigate("settings")
+                            },
+                            onNavigateToLogs = {
+                                navController.navigate("logs")
                             }
                         )
                     }
@@ -97,8 +115,19 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                    
+                    composable("logs") {
+                        LogsScreen(
+                            onNavigateBack = {
+                                navController.navigateUp()
+                            }
+                        )
+                    }
                 }
             }
+        } catch (e: Exception) {
+            logger.e("MainActivity", "Fatal error in onCreate", e)
+            throw e
         }
     }
     

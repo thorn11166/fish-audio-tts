@@ -9,6 +9,7 @@ import com.example.fishaudiotts.data.db.AppDatabase
 import com.example.fishaudiotts.data.db.VoiceEntity
 import com.example.fishaudiotts.data.repository.VoiceRepository
 import com.example.fishaudiotts.util.AudioPlayer
+import com.example.fishaudiotts.util.FileLogger
 import com.example.fishaudiotts.util.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
  * Handles initialization and common operations
  */
 class SharedViewModel(context: Context) : ViewModel() {
-    
+
+    private val logger = FileLogger.getInstance(context)
     private val preferencesManager = PreferencesManager(context)
     private val database = AppDatabase.getInstance(context)
     private var repository: VoiceRepository? = null
@@ -141,23 +143,39 @@ class SharedViewModel(context: Context) : ViewModel() {
      */
     fun searchVoices(query: String = "") {
         viewModelScope.launch {
+            logger.d("SharedViewModel", "searchVoices called with query: '$query'")
+            logger.d("SharedViewModel", "isApiConfigured: ${_isApiConfigured.value}")
+
             if (!_isApiConfigured.value) {
+                logger.w("SharedViewModel", "API not configured")
                 _errorMessage.value = "API key not configured"
                 return@launch
             }
-            
+
             // Initialize repository if needed
             val apiKey = preferencesManager.getApiKey()
+            logger.d("SharedViewModel", "API key present: ${!apiKey.isNullOrEmpty()}")
+
             if (repository == null && !apiKey.isNullOrEmpty()) {
-                initRepository(apiKey)
+                logger.d("SharedViewModel", "Initializing repository...")
+                try {
+                    initRepository(apiKey)
+                    logger.d("SharedViewModel", "Repository initialized successfully")
+                } catch (e: Exception) {
+                    logger.e("SharedViewModel", "Failed to initialize repository", e)
+                    _errorMessage.value = "Failed to initialize: ${e.message}"
+                    return@launch
+                }
             }
-            
+
             val repo = repository
             if (repo == null) {
+                logger.e("SharedViewModel", "Repository is null after initialization attempt")
                 _errorMessage.value = "Repository not initialized"
                 return@launch
             }
 
+            logger.d("SharedViewModel", "Starting voice search...")
             _isSearching.value = true
             _errorMessage.value = null
 
@@ -168,11 +186,14 @@ class SharedViewModel(context: Context) : ViewModel() {
                     perPage = 20
                 )
                 result.onSuccess { response ->
+                    logger.d("SharedViewModel", "Search successful, found ${response.voices.size} voices")
                     _searchResults.value = response.voices
                 }.onFailure { error ->
+                    logger.e("SharedViewModel", "Search failed: ${error.message}", error)
                     _errorMessage.value = "Search failed: ${error.message}"
                 }
             } catch (e: Exception) {
+                logger.e("SharedViewModel", "Search error", e)
                 _errorMessage.value = "Search error: ${e.message}"
             } finally {
                 _isSearching.value = false

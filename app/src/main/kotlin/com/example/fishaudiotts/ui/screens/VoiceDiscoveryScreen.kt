@@ -1,5 +1,6 @@
 package com.example.fishaudiotts.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +38,7 @@ import com.example.fishaudiotts.ui.theme.DarkCyan
 import com.example.fishaudiotts.ui.theme.NeonPink
 import com.example.fishaudiotts.ui.theme.VapText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
+import com.example.fishaudiotts.util.FileLogger
 import com.example.fishaudiotts.viewmodel.SharedViewModel
 
 /**
@@ -47,6 +50,8 @@ fun VoiceDiscoveryScreen(
     onNavigateBack: () -> Unit,
     onFavoriteVoice: (String, String) -> Unit = { _, _ -> }
 ) {
+    val context = LocalContext.current
+    val logger = remember { FileLogger.getInstance(context) }
     var searchQuery by remember { mutableStateOf("") }
 
     val searchResults by viewModel.searchResults.collectAsState()
@@ -57,14 +62,20 @@ fun VoiceDiscoveryScreen(
 
     // Load voices on first launch
     LaunchedEffect(Unit) {
+        Log.d("VoiceDiscoveryScreen", "Screen launched, isApiConfigured: $isApiConfigured")
+        logger.d("VoiceDiscoveryScreen", "Screen launched, isApiConfigured: $isApiConfigured")
         if (isApiConfigured) {
+            logger.d("VoiceDiscoveryScreen", "Triggering initial voice search")
             viewModel.searchVoices("")
+        } else {
+            logger.w("VoiceDiscoveryScreen", "API not configured, skipping search")
         }
     }
 
     // Debounced search
     LaunchedEffect(searchQuery) {
         if (isApiConfigured) {
+            logger.d("VoiceDiscoveryScreen", "Search query changed: '$searchQuery'")
             kotlinx.coroutines.delay(300) // 300ms debounce
             viewModel.searchVoices(searchQuery)
         }

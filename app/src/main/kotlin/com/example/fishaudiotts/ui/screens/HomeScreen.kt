@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -42,7 +43,8 @@ fun HomeScreen(
     isApiConfigured: Boolean,
     onNavigateToVoiceDiscovery: () -> Unit,
     onNavigateToCustomVoices: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onNavigateToLogs: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -158,6 +160,15 @@ fun HomeScreen(
                         title = "Settings",
                         description = "Configure API key and TTS parameters",
                         onClick = onNavigateToSettings,
+                        enabled = true
+                    )
+                    
+                    // Debug Logs
+                    VoiceNavButton(
+                        icon = androidx.compose.material.icons.Icons.Default.List,
+                        title = "Debug Logs",
+                        description = "View and share debug logs for troubleshooting",
+                        onClick = onNavigateToLogs,
                         enabled = true
                     )
                 }
