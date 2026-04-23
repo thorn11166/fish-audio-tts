@@ -242,13 +242,7 @@ private fun SettingSlider(
             value = value,
             onValueChange = onValueChange,
             valueRange = valueRange,
-            modifier = Modifier.fillMaxWidth(),
-            tracks = {
-                androidx.compose.material3.SliderDefaults.Track(
-                    sliderState = it,
-                    modifier = Modifier
-                )
-            }
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
