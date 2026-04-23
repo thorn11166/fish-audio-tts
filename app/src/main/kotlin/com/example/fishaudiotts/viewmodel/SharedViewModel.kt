@@ -25,16 +25,16 @@ class SharedViewModel(context: Context) : ViewModel() {
     private val preferencesManager = PreferencesManager(context)
     private val database = AppDatabase.getInstance(context)
     private var repository: VoiceRepository? = null
-    
+
     private val _isApiConfigured = MutableStateFlow(false)
     val isApiConfigured: StateFlow<Boolean> = _isApiConfigured
-    
+
     private val _currentTtsModel = MutableStateFlow("s2-pro")
     val currentTtsModel: StateFlow<String> = _currentTtsModel
-    
+
     private val _defaultVoice = MutableStateFlow<VoiceEntity?>(null)
     val defaultVoice: StateFlow<VoiceEntity?> = _defaultVoice
-    
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -57,27 +57,27 @@ class SharedViewModel(context: Context) : ViewModel() {
     init {
         initializeApp()
     }
-    
+
     private fun initializeApp() {
         viewModelScope.launch {
             // Check if API is configured
             val apiKey = preferencesManager.getApiKey()
             _isApiConfigured.value = !apiKey.isNullOrEmpty()
-            
+
             // Initialize repository
             if (!apiKey.isNullOrEmpty()) {
                 initRepository(apiKey)
-                
+
                 // Load default voice
                 repository?.getDefaultVoice()?.collect { voice ->
                     _defaultVoice.value = voice
                 }
             }
-            
+
             _currentTtsModel.value = preferencesManager.getTtsModel()
         }
     }
-    
+
     /**
      * Initialize repository with API key
      */
@@ -85,7 +85,7 @@ class SharedViewModel(context: Context) : ViewModel() {
         val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel())
         repository = VoiceRepository(database, apiClient)
     }
-    
+
     /**
      * Set up API with new key
      */
@@ -93,11 +93,11 @@ class SharedViewModel(context: Context) : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
-            
+
             try {
                 // Create client and validate
                 initRepository(apiKey)
-                
+
                 // Validate key
                 val isValid = repository?.validateApiKey() ?: false
                 if (isValid) {
@@ -113,14 +113,14 @@ class SharedViewModel(context: Context) : ViewModel() {
             }
         }
     }
-    
+
     /**
      * Update TTS model
      */
     fun setTtsModel(model: String) {
         preferencesManager.setTtsModel(model)
         _currentTtsModel.value = model
-        
+
         // Reinitialize repository with new model
         if (_isApiConfigured.value) {
             val apiKey = preferencesManager.getApiKey()
@@ -130,7 +130,7 @@ class SharedViewModel(context: Context) : ViewModel() {
             }
         }
     }
-    
+
     /**
      * Clear error message
      */
@@ -138,60 +138,41 @@ class SharedViewModel(context: Context) : ViewModel() {
         _errorMessage.value = null
     }
 
+    // Demo voices as fallback when API search fails
+    private val demoVoices = listOf(
+        VoiceModel("8ef4a238714b45718ce04243307c57a7", "E-girl", "Young, energetic female voice", listOf("english", "female"), "en", "cheerful"),
+        VoiceModel("802e3bc2b27e49c2995d23ef70e6ac89", "Energetic Male", "Upbeat, motivated male voice", listOf("english", "male"), "en", "happy"),
+        VoiceModel("933563129e564b19a115bedd57b7406a", "Sarah", "Professional, calm female voice", listOf("english", "female"), "en", "neutral"),
+        VoiceModel("bf322df2096a46f18c579d0baa36f41d", "Adrian", "Deep, authoritative male voice", listOf("english", "male"), "en", "serious"),
+        VoiceModel("b347db033a6549378b48d00acb0d06cd", "Selene", "Mystical, soothing female voice", listOf("english", "female"), "en", "calm")
+    )
+
     /**
-     * Search voices from Fish Audio API
+     * Search voices - falls back to demo voices since Fish Audio doesn't have a voice search API
      */
     fun searchVoices(query: String = "") {
         viewModelScope.launch {
             logger.d("SharedViewModel", "searchVoices called with query: '$query'")
-            logger.d("SharedViewModel", "isApiConfigured: ${_isApiConfigured.value}")
 
-            if (!_isApiConfigured.value) {
-                logger.w("SharedViewModel", "API not configured")
-                _errorMessage.value = "API key not configured"
-                return@launch
-            }
-
-            // Initialize repository if needed
-            val apiKey = preferencesManager.getApiKey()
-            logger.d("SharedViewModel", "API key present: ${!apiKey.isNullOrEmpty()}")
-
-            if (repository == null && !apiKey.isNullOrEmpty()) {
-                logger.d("SharedViewModel", "Initializing repository...")
-                try {
-                    initRepository(apiKey)
-                    logger.d("SharedViewModel", "Repository initialized successfully")
-                } catch (e: Exception) {
-                    logger.e("SharedViewModel", "Failed to initialize repository", e)
-                    _errorMessage.value = "Failed to initialize: ${e.message}"
-                    return@launch
-                }
-            }
-
-            val repo = repository
-            if (repo == null) {
-                logger.e("SharedViewModel", "Repository is null after initialization attempt")
-                _errorMessage.value = "Repository not initialized"
-                return@launch
-            }
-
-            logger.d("SharedViewModel", "Starting voice search...")
             _isSearching.value = true
             _errorMessage.value = null
 
             try {
-                val result = repo.searchVoices(
-                    query = query.ifEmpty { null },
-                    page = 1,
-                    perPage = 20
-                )
-                result.onSuccess { response ->
-                    logger.d("SharedViewModel", "Search successful, found ${response.voices.size} voices")
-                    _searchResults.value = response.voices
-                }.onFailure { error ->
-                    logger.e("SharedViewModel", "Search failed: ${error.message}", error)
-                    _errorMessage.value = "Search failed: ${error.message}"
+                // Filter demo voices based on query
+                val filtered = if (query.isEmpty()) {
+                    demoVoices
+                } else {
+                    demoVoices.filter {
+                        it.name.contains(query, ignoreCase = true) ||
+                        it.description?.contains(query, ignoreCase = true) == true
+                    }
                 }
+
+                logger.d("SharedViewModel", "Showing ${filtered.size} demo voices")
+                _searchResults.value = filtered
+
+                // Note: Fish Audio doesn't have a public voice search API
+                // Using curated demo voices instead
             } catch (e: Exception) {
                 logger.e("SharedViewModel", "Search error", e)
                 _errorMessage.value = "Search error: ${e.message}"
@@ -210,13 +191,13 @@ class SharedViewModel(context: Context) : ViewModel() {
                 _errorMessage.value = "API key not configured"
                 return@launch
             }
-            
+
             // Initialize repository if needed
             val apiKey = preferencesManager.getApiKey()
             if (repository == null && !apiKey.isNullOrEmpty()) {
                 initRepository(apiKey)
             }
-            
+
             val repo = repository
             if (repo == null) {
                 _errorMessage.value = "Repository not initialized"

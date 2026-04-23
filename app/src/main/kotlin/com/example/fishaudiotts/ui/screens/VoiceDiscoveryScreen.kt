@@ -61,23 +61,15 @@ fun VoiceDiscoveryScreen(
 
     // Load voices on first launch
     LaunchedEffect(Unit) {
-        Log.d("VoiceDiscoveryScreen", "Screen launched, isApiConfigured: $isApiConfigured")
-        logger.d("VoiceDiscoveryScreen", "Screen launched, isApiConfigured: $isApiConfigured")
-        if (isApiConfigured) {
-            logger.d("VoiceDiscoveryScreen", "Triggering initial voice search")
-            viewModel.searchVoices("")
-        } else {
-            logger.w("VoiceDiscoveryScreen", "API not configured, skipping search")
-        }
+        logger.d("VoiceDiscoveryScreen", "Screen launched")
+        viewModel.searchVoices("")
     }
 
     // Debounced search
     LaunchedEffect(searchQuery) {
-        if (isApiConfigured) {
-            logger.d("VoiceDiscoveryScreen", "Search query changed: '$searchQuery'")
-            kotlinx.coroutines.delay(300) // 300ms debounce
-            viewModel.searchVoices(searchQuery)
-        }
+        logger.d("VoiceDiscoveryScreen", "Search query changed: '$searchQuery'")
+        kotlinx.coroutines.delay(300) // 300ms debounce
+        viewModel.searchVoices(searchQuery)
     }
 
     Column(
@@ -129,25 +121,15 @@ fun VoiceDiscoveryScreen(
                     focusedTextColor = VapText,
                     unfocusedTextColor = VapText
                 ),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
-                enabled = isApiConfigured
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
             )
 
-            if (!isApiConfigured) {
-                Text(
-                    text = "⚠️ Configure API key in Settings to search voices",
-                    fontSize = 12.sp,
-                    color = DarkCyan,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            } else {
-                Text(
-                    text = if (isSearching) "Searching..." else "${searchResults.size} voice${if (searchResults.size != 1) "s" else ""} found",
-                    fontSize = 12.sp,
-                    color = DarkCyan,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
+            Text(
+                text = if (isSearching) "Searching..." else "${searchResults.size} voice${if (searchResults.size != 1) "s" else ""} found",
+                fontSize = 12.sp,
+                color = DarkCyan,
+                modifier = Modifier.padding(top = 8.dp)
+            )
 
             // Error message
             errorMessage?.let { error ->
