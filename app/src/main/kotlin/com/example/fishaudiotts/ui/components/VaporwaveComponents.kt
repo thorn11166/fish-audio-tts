@@ -145,8 +145,10 @@ fun NeonText(
 @Composable
 fun VoicePreviewCard(
     voiceName: String,
+    description: String? = null,
     onPlay: () -> Unit,
     onFavorite: () -> Unit,
+    isPlaying: Boolean = false,
     isFavorite: Boolean = false,
     modifier: Modifier = Modifier
 ) {
@@ -160,9 +162,18 @@ fun VoicePreviewCard(
                 text = voiceName,
                 color = NeonPink,
                 fontSize = 18.sp,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             )
-            
+
+            description?.let {
+                Text(
+                    text = it,
+                    color = VapText.copy(alpha = 0.7f),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -174,20 +185,22 @@ fun VoicePreviewCard(
                     modifier = Modifier
                         .size(48.dp)
                         .background(
-                            brush = neonGradient,
+                            brush = if (isPlaying) Brush.linearGradient(
+                                colors = listOf(DarkCyan, NeonBlue)
+                            ) else neonGradient,
                             shape = RoundedCornerShape(24.dp)
                         )
                         .clickable(onClick = onPlay),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Play voice",
+                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = if (isPlaying) "Stop preview" else "Play voice",
                         tint = VapDarkBg,
                         modifier = Modifier.size(28.dp)
                     )
                 }
-                
+
                 // Favorite Button
                 Box(
                     modifier = Modifier

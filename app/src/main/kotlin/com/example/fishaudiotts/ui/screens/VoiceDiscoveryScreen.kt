@@ -1,6 +1,7 @@
 package com.example.fishaudiotts.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,12 +10,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,32 +36,40 @@ import com.example.fishaudiotts.ui.theme.DarkCyan
 import com.example.fishaudiotts.ui.theme.NeonPink
 import com.example.fishaudiotts.ui.theme.VapText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
+import com.example.fishaudiotts.viewmodel.SharedViewModel
 
 /**
  * Voice Discovery Screen - Browse and search Fish Audio voices
  */
 @Composable
 fun VoiceDiscoveryScreen(
+    viewModel: SharedViewModel,
     onNavigateBack: () -> Unit,
     onFavoriteVoice: (String, String) -> Unit = { _, _ -> }
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    var selectedVoice by remember { mutableStateOf<String?>(null) }
-    
-    // Demo voices - in production, these would come from Fish Audio API
-    val demoVoices = listOf(
-        Triple("8ef4a238714b45718ce04243307c57a7", "E-girl", "Young, energetic female voice"),
-        Triple("802e3bc2b27e49c2995d23ef70e6ac89", "Energetic Male", "Upbeat, motivated male voice"),
-        Triple("933563129e564b19a115bedd57b7406a", "Sarah", "Professional, calm female voice"),
-        Triple("bf322df2096a46f18c579d0baa36f41d", "Adrian", "Deep, authoritative male voice"),
-        Triple("b347db033a6549378b48d00acb0d06cd", "Selene", "Mystical, soothing female voice"),
-    )
-    
-    val filteredVoices = demoVoices.filter {
-        it.second.contains(searchQuery, ignoreCase = true) ||
-        it.third.contains(searchQuery, ignoreCase = true)
+
+    val searchResults by viewModel.searchResults.collectAsState()
+    val isSearching by viewModel.isSearching.collectAsState()
+    val currentlyPlayingVoiceId by viewModel.currentlyPlayingVoiceId.collectAsState()
+    val isApiConfigured by viewModel.isApiConfigured.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    // Load voices on first launch
+    LaunchedEffect(Unit) {
+        if (isApiConfigured) {
+            viewModel.searchVoices("")
+        }
     }
-    
+
+    // Debounced search
+    LaunchedEffect(searchQuery) {
+        if (isApiConfigured) {
+            kotlinx.coroutines.delay(300) // 300ms debounce
+            viewModel.searchVoices(searchQuery)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +92,7 @@ fun VoiceDiscoveryScreen(
                     tint = NeonPink
                 )
             }
-            
+
             Text(
                 text = "🔍 Discover Voices",
                 fontSize = 28.sp,
@@ -86,7 +100,7 @@ fun VoiceDiscoveryScreen(
                 color = NeonPink
             )
         }
-        
+
         // Search Bar
         Column(
             modifier = Modifier
@@ -105,17 +119,49 @@ fun VoiceDiscoveryScreen(
                     focusedTextColor = VapText,
                     unfocusedTextColor = VapText
                 ),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                enabled = isApiConfigured
             )
-            
-            Text(
-                text = "${filteredVoices.size} voice${if (filteredVoices.size != 1) "s" else ""} found",
-                fontSize = 11.sp,
-                color = DarkCyan,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+
+            if (!isApiConfigured) {
+                Text(
+                    text = "⚠️ Configure API key in Settings to search voices",
+                    fontSize = 12.sp,
+                    color = DarkCyan,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            } else {
+                Text(
+                    text = if (isSearching) "Searching..." else "${searchResults.size} voice${if (searchResults.size != 1) "s" else ""} found",
+                    fontSize = 12.sp,
+                    color = DarkCyan,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            // Error message
+            errorMessage?.let { error ->
+                Text(
+                    text = "⚠️ $error",
+                    fontSize = 12.sp,
+                    color = NeonPink,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
         }
-        
+
+        // Loading indicator
+        if (isSearching) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = NeonPink)
+            }
+        }
+
         // Voice List
         LazyColumn(
             modifier = Modifier
@@ -123,17 +169,18 @@ fun VoiceDiscoveryScreen(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
         ) {
-            items(filteredVoices) { (id, name, description) ->
+            items(searchResults) { voice ->
                 VoicePreviewCard(
-                    voiceName = name,
+                    voiceName = voice.name,
+                    description = voice.description ?: "No description",
                     onPlay = {
-                        selectedVoice = id
-                        // In production, play audio from Fish Audio
+                        viewModel.playVoicePreview(voice.id)
                     },
                     onFavorite = {
-                        onFavoriteVoice(id, name)
+                        onFavoriteVoice(voice.id, voice.name)
                     },
-                    isFavorite = selectedVoice == id,
+                    isPlaying = currentlyPlayingVoiceId == voice.id,
+                    isFavorite = false,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }

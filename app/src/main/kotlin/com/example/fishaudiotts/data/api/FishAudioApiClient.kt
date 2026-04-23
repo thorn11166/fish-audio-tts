@@ -104,7 +104,7 @@ class FishAudioApiClient(
     
     /**
      * Validate API key by making a test TTS request
-     * 
+     *
      * @return true if API key is valid
      */
     suspend fun validateApiKey(): Boolean {
@@ -122,6 +122,32 @@ class FishAudioApiClient(
         } catch (e: Exception) {
             Log.w(TAG, "API key validation failed: ${e.message}")
             false
+        }
+    }
+
+    /**
+     * Search voices from Fish Audio library
+     *
+     * @param query Search query string
+     * @param page Page number for pagination
+     * @param perPage Number of results per page
+     * @return VoiceListResponse containing voices and pagination info
+     */
+    suspend fun searchVoices(
+        query: String? = null,
+        page: Int = 1,
+        perPage: Int = 20
+    ): com.example.fishaudiotts.data.api.models.VoiceListResponse {
+        return try {
+            service.searchVoices(
+                authorization = "Bearer $apiKey",
+                query = query,
+                page = page,
+                perPage = perPage
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Voice search failed: ${e.message}", e)
+            throw e
         }
     }
 }

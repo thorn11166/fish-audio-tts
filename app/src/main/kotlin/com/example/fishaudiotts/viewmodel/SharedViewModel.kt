@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fishaudiotts.data.api.FishAudioApiClient
+import com.example.fishaudiotts.data.api.models.VoiceModel
 import com.example.fishaudiotts.data.db.AppDatabase
 import com.example.fishaudiotts.data.db.VoiceEntity
 import com.example.fishaudiotts.data.repository.VoiceRepository
+import com.example.fishaudiotts.util.AudioPlayer
 import com.example.fishaudiotts.util.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,10 +35,23 @@ class SharedViewModel(context: Context) : ViewModel() {
     
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
-    
+
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
-    
+
+    // Voice search state
+    private val _searchResults = MutableStateFlow<List<VoiceModel>>(emptyList())
+    val searchResults: StateFlow<List<VoiceModel>> = _searchResults
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching: StateFlow<Boolean> = _isSearching
+
+    // Audio playback state
+    private val _currentlyPlayingVoiceId = MutableStateFlow<String?>(null)
+    val currentlyPlayingVoiceId: StateFlow<String?> = _currentlyPlayingVoiceId
+
+    private val audioPlayer = AudioPlayer(context)
+
     init {
         initializeApp()
     }
@@ -113,5 +128,87 @@ class SharedViewModel(context: Context) : ViewModel() {
      */
     fun clearError() {
         _errorMessage.value = null
+    }
+
+    /**
+     * Search voices from Fish Audio API
+     */
+    fun searchVoices(query: String = "") {
+        viewModelScope.launch {
+            if (!_isApiConfigured.value) {
+                _errorMessage.value = "API key not configured"
+                return@launch
+            }
+
+            _isSearching.value = true
+            _errorMessage.value = null
+
+            try {
+                val result = repository.searchVoices(
+                    query = query.ifEmpty { null },
+                    page = 1,
+                    perPage = 20
+                )
+                result.onSuccess { response ->
+                    _searchResults.value = response.voices
+                }.onFailure { error ->
+                    _errorMessage.value = "Search failed: ${error.message}"
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Search error: ${e.message}"
+            } finally {
+                _isSearching.value = false
+            }
+        }
+    }
+
+    /**
+     * Play voice preview
+     */
+    fun playVoicePreview(voiceId: String) {
+        viewModelScope.launch {
+            if (!_isApiConfigured.value) {
+                _errorMessage.value = "API key not configured"
+                return@launch
+            }
+
+            // Stop if already playing this voice
+            if (_currentlyPlayingVoiceId.value == voiceId && audioPlayer.isPlaying()) {
+                stopVoicePreview()
+                return@launch
+            }
+
+            _currentlyPlayingVoiceId.value = voiceId
+            _errorMessage.value = null
+
+            try {
+                val result = repository.generateVoicePreview(voiceId)
+                result.onSuccess { audioStream ->
+                    audioPlayer.playPreview(audioStream) {
+                        // On complete
+                        _currentlyPlayingVoiceId.value = null
+                    }
+                }.onFailure { error ->
+                    _errorMessage.value = "Preview failed: ${error.message}"
+                    _currentlyPlayingVoiceId.value = null
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Preview error: ${e.message}"
+                _currentlyPlayingVoiceId.value = null
+            }
+        }
+    }
+
+    /**
+     * Stop voice preview
+     */
+    fun stopVoicePreview() {
+        audioPlayer.stop()
+        _currentlyPlayingVoiceId.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioPlayer.release()
     }
 }

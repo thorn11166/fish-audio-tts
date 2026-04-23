@@ -162,4 +162,38 @@ class VoiceRepository(
             false
         }
     }
+
+    /**
+     * Search voices from Fish Audio library
+     */
+    suspend fun searchVoices(query: String? = null, page: Int = 1, perPage: Int = 20): Result<com.example.fishaudiotts.data.api.models.VoiceListResponse> {
+        return try {
+            val response = apiClient.searchVoices(query = query, page = page, perPage = perPage)
+            Result.success(response)
+        } catch (e: Exception) {
+            Log.e(TAG, "Voice search failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Generate voice preview (short TTS sample)
+     */
+    suspend fun generateVoicePreview(voiceId: String): Result<java.io.InputStream> {
+        return try {
+            val previewText = "Hello! This is my voice. I hope you like how I sound."
+            val audioStream = apiClient.generateSpeech(
+                text = previewText,
+                referenceId = voiceId,
+                prosodySpeed = 1.0,
+                prosodyVolume = 0.0,
+                format = "mp3",
+                sampleRate = 44100
+            )
+            Result.success(audioStream)
+        } catch (e: Exception) {
+            Log.e(TAG, "Voice preview generation failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
 }

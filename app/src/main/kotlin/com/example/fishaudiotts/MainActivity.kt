@@ -72,6 +72,7 @@ class MainActivity : ComponentActivity() {
                     
                     composable("voice_discovery") {
                         VoiceDiscoveryScreen(
+                            viewModel = sharedViewModel,
                             onNavigateBack = {
                                 navController.navigateUp()
                             },
