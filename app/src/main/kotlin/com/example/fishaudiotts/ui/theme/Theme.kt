@@ -1,18 +1,12 @@
 package com.example.fishaudiotts.ui.theme
 
 import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -85,15 +79,9 @@ fun FishAudioTTSTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (context as Activity).window
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                // Android 15+ - use edge to edge
-                window.statusBarColor = Color.Transparent.toArgb()
-                window.navigationBarColor = Color.Transparent.toArgb()
-            } else {
-                // Pre-Android 15
-                window.statusBarColor = TorBoxDarkGray.toArgb()
-                window.navigationBarColor = TorBoxDarkGray.toArgb()
-            }
+            // Set dark status/navigation bar colors
+            window.statusBarColor = TorBoxDarkGray.toArgb()
+            window.navigationBarColor = TorBoxDarkGray.toArgb()
             WindowCompat.getInsetsController(window, view).apply {
                 isAppearanceLightStatusBars = false
                 isAppearanceLightNavigationBars = false
