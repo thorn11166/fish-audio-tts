@@ -40,10 +40,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fishaudiotts.ui.components.VoicePreviewCard
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 import com.example.fishaudiotts.util.FileLogger
 import com.example.fishaudiotts.viewmodel.SharedViewModel
@@ -110,7 +110,7 @@ fun VoiceDiscoveryScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = NeonPink
+                    tint = TorBoxGreen
                 )
             }
 
@@ -118,7 +118,7 @@ fun VoiceDiscoveryScreen(
                 text = "🔍 Discover Voices",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = NeonPink
+                color = TorBoxGreen
             )
         }
 
@@ -136,13 +136,13 @@ fun VoiceDiscoveryScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search voices...", color = VapText.copy(alpha = 0.5f)) },
+                    placeholder = { Text("Search voices...", color = TorBoxText.copy(alpha = 0.5f)) },
                     modifier = Modifier.weight(1f),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = NeonPink,
-                        unfocusedBorderColor = CyberPurple,
-                        focusedTextColor = VapText,
-                        unfocusedTextColor = VapText
+                        focusedBorderColor = TorBoxGreen,
+                        unfocusedBorderColor = TorBoxCard,
+                        focusedTextColor = TorBoxText,
+                        unfocusedTextColor = TorBoxText
                     ),
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
                     enabled = isApiConfigured,
@@ -160,8 +160,8 @@ fun VoiceDiscoveryScreen(
                     onClick = performSearch,
                     enabled = isApiConfigured,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = NeonPink,
-                        disabledContainerColor = CyberPurple.copy(alpha = 0.5f)
+                        containerColor = TorBoxGreen,
+                        disabledContainerColor = TorBoxCard.copy(alpha = 0.5f)
                     ),
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
@@ -176,14 +176,14 @@ fun VoiceDiscoveryScreen(
                 Text(
                     text = "⚠️ API key required to browse voices. Add your key in Settings.",
                     fontSize = 12.sp,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             } else {
                 Text(
                     text = if (isSearching) "Searching..." else "${searchResults.size} voice${if (searchResults.size != 1) "s" else ""} found",
                     fontSize = 12.sp,
-                    color = DarkCyan,
+                    color = TorBoxGreenLight,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -193,7 +193,7 @@ fun VoiceDiscoveryScreen(
                 Text(
                     text = "⚠️ $error",
                     fontSize = 12.sp,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -209,7 +209,7 @@ fun VoiceDiscoveryScreen(
             ) {
                 Text(
                     text = "⏳ Loading voices...",
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     fontSize = 16.sp
                 )
             }

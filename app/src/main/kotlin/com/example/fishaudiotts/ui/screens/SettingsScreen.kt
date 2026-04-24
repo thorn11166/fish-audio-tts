@@ -29,12 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fishaudiotts.ui.components.VaporwaveButton
 import com.example.fishaudiotts.ui.components.VaporwaveCard
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapDarkBg
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxBlack
 import com.example.fishaudiotts.ui.theme.VapSolidBg
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 import com.example.fishaudiotts.viewmodel.SettingsViewModel
 
@@ -77,7 +77,7 @@ fun SettingsScreen(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = NeonPink
+                    tint = TorBoxGreen
                 )
             }
             
@@ -85,7 +85,7 @@ fun SettingsScreen(
                 text = "⚙️ Settings",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = NeonPink
+                color = TorBoxGreen
             )
         }
         
@@ -104,20 +104,20 @@ fun SettingsScreen(
                         text = "🔑 API Configuration",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NeonPink,
+                        color = TorBoxGreen,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     
                     OutlinedTextField(
                         value = apiKey,
                         onValueChange = { viewModel.updateApiKey(it) },
-                        label = { Text("Fish Audio API Key", color = DarkCyan) },
+                        label = { Text("Fish Audio API Key", color = TorBoxGreenLight) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NeonPink,
-                            unfocusedBorderColor = CyberPurple,
-                            focusedTextColor = VapText,
-                            unfocusedTextColor = VapText
+                            focusedBorderColor = TorBoxGreen,
+                            unfocusedBorderColor = TorBoxCard,
+                            focusedTextColor = TorBoxText,
+                            unfocusedTextColor = TorBoxText
                         )
                     )
                 }
@@ -130,7 +130,7 @@ fun SettingsScreen(
                         text = "🎵 TTS Model",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NeonPink,
+                        color = TorBoxGreen,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     
@@ -151,7 +151,7 @@ fun SettingsScreen(
                         text = "🎙️ Voice Control",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NeonPink,
+                        color = TorBoxGreen,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     
@@ -192,7 +192,7 @@ fun SettingsScreen(
             if (saveMessage != null) {
                 Text(
                     text = saveMessage!!,
-                    color = DarkCyan,
+                    color = TorBoxGreenLight,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(8.dp)
                 )
@@ -213,7 +213,7 @@ private fun ModelButton(label: String, isSelected: Boolean, onClick: () -> Unit)
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = if (isSelected) NeonPink.copy(alpha = 0.3f) else CyberPurple.copy(alpha = 0.1f),
+                color = if (isSelected) TorBoxGreen.copy(alpha = 0.3f) else TorBoxCard.copy(alpha = 0.1f),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
             )
             .clickable(onClick = onClick)
@@ -224,7 +224,7 @@ private fun ModelButton(label: String, isSelected: Boolean, onClick: () -> Unit)
             text = label,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = if (isSelected) NeonPink else VapText
+            color = if (isSelected) TorBoxGreen else TorBoxText
         )
     }
 }
@@ -237,7 +237,7 @@ private fun SettingSlider(
     valueRange: ClosedFloatingPointRange<Float>
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(text = label, fontSize = 12.sp, color = DarkCyan)
+        Text(text = label, fontSize = 12.sp, color = TorBoxGreenLight)
         Slider(
             value = value,
             onValueChange = onValueChange,
@@ -258,13 +258,13 @@ private fun SettingToggle(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Text(text = label, fontSize = 12.sp, color = DarkCyan)
+        Text(text = label, fontSize = 12.sp, color = TorBoxGreenLight)
         Switch(
             checked = value,
             onCheckedChange = onValueChange,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = NeonPink,
-                uncheckedThumbColor = CyberPurple
+                checkedThumbColor = TorBoxGreen,
+                uncheckedThumbColor = TorBoxCard
             ),
             modifier = Modifier.padding(top = 4.dp)
         )

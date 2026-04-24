@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fishaudiotts.ui.components.VaporwaveButton
 import com.example.fishaudiotts.ui.components.VaporwaveCard
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 
 /**
@@ -67,7 +67,7 @@ fun HomeScreen(
                     text = "🎙️ Fish Audio TTS",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
@@ -83,13 +83,13 @@ fun HomeScreen(
                             text = "⚠️ Setup Required",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = NeonPink,
+                            color = TorBoxGreen,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Text(
                             text = "Configure your Fish Audio API key in Settings to get started.",
                             fontSize = 14.sp,
-                            color = VapText,
+                            color = TorBoxText,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                         VaporwaveButton(
@@ -108,13 +108,13 @@ fun HomeScreen(
                             text = "✨ Ready to Speak",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = NeonPink,
+                            color = TorBoxGreen,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Text(
                             text = "API configured and ready to generate speech.",
                             fontSize = 14.sp,
-                            color = VapText
+                            color = TorBoxText
                         )
                     }
                 }
@@ -183,7 +183,7 @@ private fun VoiceNavButton(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = if (enabled) CyberPurple.copy(alpha = 0.3f) else CyberPurple.copy(alpha = 0.15f),
+                color = if (enabled) TorBoxCard.copy(alpha = 0.3f) else TorBoxCard.copy(alpha = 0.15f),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
             )
             .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier)
@@ -200,12 +200,12 @@ private fun VoiceNavButton(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = if (enabled) NeonPink else VapText.copy(alpha = 0.5f)
+                color = if (enabled) TorBoxGreen else TorBoxText.copy(alpha = 0.5f)
             )
             Text(
                 text = description,
                 fontSize = 12.sp,
-                color = if (enabled) VapText else VapText.copy(alpha = 0.3f)
+                color = if (enabled) TorBoxText else TorBoxText.copy(alpha = 0.3f)
             )
         }
     }

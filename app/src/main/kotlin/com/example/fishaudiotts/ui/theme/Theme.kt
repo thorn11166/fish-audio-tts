@@ -12,30 +12,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 private val DarkColorScheme = darkColorScheme(
-    primary = NeonPink,
-    onPrimary = VapDarkBg,
-    primaryContainer = CyberPurple,
-    onPrimaryContainer = VapText,
-    secondary = DarkCyan,
-    onSecondary = VapDarkBg,
-    secondaryContainer = NeonBlue,
-    onSecondaryContainer = VapText,
-    tertiary = LimeLime,
-    onTertiary = VapDarkBg,
-    tertiaryContainer = CyberPurple,
-    onTertiaryContainer = VapText,
-    error = VapError,
-    onError = VapDarkBg,
-    errorContainer = VapError,
-    onErrorContainer = VapText,
-    background = VapDarkBg,
-    onBackground = VapText,
-    surface = VapSolidBg,
-    onSurface = VapText,
-    surfaceVariant = VapGradientLight,
-    onSurfaceVariant = VapTextSecondary,
-    outline = NeonPink,
-    outlineVariant = CyberPurple,
+    primary = TorBoxGreen,
+    onPrimary = TorBoxBlack,
+    primaryContainer = TorBoxCard,
+    onPrimaryContainer = TorBoxText,
+    secondary = TorBoxGreenLight,
+    onSecondary = TorBoxBlack,
+    secondaryContainer = TorBoxSurface,
+    onSecondaryContainer = TorBoxText,
+    tertiary = TorBoxGreenDark,
+    onTertiary = TorBoxText,
+    tertiaryContainer = TorBoxCard,
+    onTertiaryContainer = TorBoxText,
+    error = TorBoxError,
+    onError = TorBoxText,
+    errorContainer = TorBoxError.copy(alpha = 0.2f),
+    onErrorContainer = TorBoxText,
+    background = TorBoxDarkGray,
+    onBackground = TorBoxText,
+    surface = TorBoxSurface,
+    onSurface = TorBoxText,
+    surfaceVariant = TorBoxCard,
+    onSurfaceVariant = TorBoxTextSecondary,
+    outline = TorBoxGreen,
+    outlineVariant = TorBoxGreenDark,
     scrim = Color.Black
 )
 
@@ -49,29 +49,27 @@ val VaporwaveShapes = Shapes(
 
 val vaporwaveGradient = Brush.verticalGradient(
     colors = listOf(
-        VapDarkBg,
-        VapSolidBg,
-        VapGradientLight
+        TorBoxDarkGray,
+        TorBoxSurface,
+        TorBoxCard
     )
 )
 
 val neonGradient = Brush.linearGradient(
     colors = listOf(
-        NeonPink,
-        CyberPurple,
-        DarkCyan
+        TorBoxGreen,
+        TorBoxGreenLight,
+        TorBoxGreenDark
     )
 )
 
 @Composable
 fun FishAudioTTSTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else DarkColorScheme
-    
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = DarkColorScheme,
         typography = vaporwaveTypography,
         shapes = VaporwaveShapes,
         content = content

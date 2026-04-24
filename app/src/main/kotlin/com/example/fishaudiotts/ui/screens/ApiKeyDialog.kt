@@ -27,11 +27,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapDarkBg
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxBlack
+import com.example.fishaudiotts.ui.theme.TorBoxText
 
 /**
  * First-run API key dialog
@@ -51,7 +51,7 @@ fun ApiKeyDialog(
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = VapDarkBg
+                containerColor = TorBoxBlack
             )
         ) {
             Column(
@@ -64,7 +64,7 @@ fun ApiKeyDialog(
                     text = "🎙️ Welcome to Fish Audio TTS",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     textAlign = TextAlign.Center
                 )
 
@@ -73,7 +73,7 @@ fun ApiKeyDialog(
                 Text(
                     text = "To use this app, you need a Fish Audio API key.",
                     fontSize = 14.sp,
-                    color = VapText,
+                    color = TorBoxText,
                     textAlign = TextAlign.Center
                 )
 
@@ -82,7 +82,7 @@ fun ApiKeyDialog(
                 Text(
                     text = "Get your free API key at fish.audio",
                     fontSize = 12.sp,
-                    color = DarkCyan,
+                    color = TorBoxGreenLight,
                     textAlign = TextAlign.Center
                 )
 
@@ -95,12 +95,12 @@ fun ApiKeyDialog(
                     placeholder = { Text("Paste your API key here...") },
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = NeonPink,
-                        unfocusedBorderColor = CyberPurple,
-                        focusedTextColor = VapText,
-                        unfocusedTextColor = VapText,
-                        focusedLabelColor = DarkCyan,
-                        unfocusedLabelColor = DarkCyan
+                        focusedBorderColor = TorBoxGreen,
+                        unfocusedBorderColor = TorBoxCard,
+                        focusedTextColor = TorBoxText,
+                        unfocusedTextColor = TorBoxText,
+                        focusedLabelColor = TorBoxGreenLight,
+                        unfocusedLabelColor = TorBoxGreenLight
                     ),
                     singleLine = true
                 )
@@ -113,7 +113,7 @@ fun ApiKeyDialog(
                     Button(
                         onClick = onLater,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = CyberPurple
+                            containerColor = TorBoxCard
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
@@ -129,7 +129,7 @@ fun ApiKeyDialog(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = NeonPink
+                            containerColor = TorBoxGreen
                         ),
                         modifier = Modifier.weight(1f),
                         enabled = apiKey.isNotBlank()

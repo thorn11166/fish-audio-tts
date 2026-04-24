@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import com.example.fishaudiotts.util.FileLogger
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -79,7 +79,7 @@ fun LogsScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = NeonPink
+                        tint = TorBoxGreen
                     )
                 }
                 
@@ -87,7 +87,7 @@ fun LogsScreen(
                     text = "📋 Debug Logs",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     modifier = Modifier.weight(1f)
                 )
                 
@@ -102,7 +102,7 @@ fun LogsScreen(
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Share logs",
-                        tint = DarkCyan
+                        tint = TorBoxGreenLight
                     )
                 }
                 
@@ -116,7 +116,7 @@ fun LogsScreen(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Clear logs",
-                        tint = NeonPink
+                        tint = TorBoxGreen
                     )
                 }
             }
@@ -129,14 +129,14 @@ fun LogsScreen(
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp)
-                    .background(CyberPurple.copy(alpha = 0.3f))
+                    .background(TorBoxCard.copy(alpha = 0.3f))
                     .padding(12.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     text = logs,
                     fontSize = 11.sp,
-                    color = VapText,
+                    color = TorBoxText,
                     fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                 )
             }

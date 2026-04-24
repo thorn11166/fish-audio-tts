@@ -31,15 +31,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
 import com.example.fishaudiotts.ui.theme.NeonBlue
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapDarkBg
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxBlack
 import com.example.fishaudiotts.ui.theme.VapError
 import com.example.fishaudiotts.ui.theme.VapGradientLight
 import com.example.fishaudiotts.ui.theme.VapSolidBg
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.neonGradient
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 
@@ -62,15 +62,15 @@ fun VaporwaveButton(
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp)),
         colors = ButtonDefaults.buttonColors(
-            containerColor = NeonPink,
-            disabledContainerColor = CyberPurple.copy(alpha = 0.5f)
+            containerColor = TorBoxGreen,
+            disabledContainerColor = TorBoxCard.copy(alpha = 0.5f)
         ),
         enabled = enabled && !isLoading
     ) {
         Text(
             text = if (isLoading) "Loading..." else text,
             fontSize = 16.sp,
-            color = VapDarkBg,
+            color = TorBoxBlack,
             modifier = Modifier.padding(8.dp)
         )
     }
@@ -93,7 +93,7 @@ fun VaporwaveCard(
             .border(
                 width = 2.dp,
                 brush = Brush.linearGradient(
-                    colors = listOf(NeonPink, CyberPurple, DarkCyan)
+                    colors = listOf(TorBoxGreen, TorBoxCard, TorBoxGreenLight)
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
@@ -131,7 +131,7 @@ fun NeonText(
     Text(
         text = text,
         fontSize = fontSize.sp,
-        color = NeonPink,
+        color = TorBoxGreen,
         modifier = if (glowing) {
             modifier.shadow(elevation = 4.dp)
         } else {
@@ -161,7 +161,7 @@ fun VoicePreviewCard(
         ) {
             Text(
                 text = voiceName,
-                color = NeonPink,
+                color = TorBoxGreen,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
@@ -169,7 +169,7 @@ fun VoicePreviewCard(
             description?.let {
                 Text(
                     text = it,
-                    color = VapText.copy(alpha = 0.7f),
+                    color = TorBoxText.copy(alpha = 0.7f),
                     fontSize = 12.sp,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
@@ -187,7 +187,7 @@ fun VoicePreviewCard(
                         .size(48.dp)
                         .background(
                             brush = if (isPlaying) Brush.linearGradient(
-                                colors = listOf(DarkCyan, NeonBlue)
+                                colors = listOf(TorBoxGreenLight, NeonBlue)
                             ) else neonGradient,
                             shape = RoundedCornerShape(24.dp)
                         )
@@ -197,7 +197,7 @@ fun VoicePreviewCard(
                     Icon(
                         imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                         contentDescription = if (isPlaying) "Stop preview" else "Play voice",
-                        tint = VapDarkBg,
+                        tint = TorBoxBlack,
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -208,7 +208,7 @@ fun VoicePreviewCard(
                         .align(Alignment.CenterEnd)
                         .size(40.dp)
                         .background(
-                            color = if (isFavorite) NeonPink else VapGradientLight,
+                            color = if (isFavorite) TorBoxGreen else VapGradientLight,
                             shape = RoundedCornerShape(20.dp)
                         )
                         .clickable(onClick = onFavorite),
@@ -217,7 +217,7 @@ fun VoicePreviewCard(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Favorite",
-                        tint = if (isFavorite) VapDarkBg else DarkCyan,
+                        tint = if (isFavorite) TorBoxBlack else TorBoxGreenLight,
                         modifier = Modifier.size(20.dp)
                     )
                 }

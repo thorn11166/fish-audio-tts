@@ -2,28 +2,49 @@ package com.example.fishaudiotts.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Vaporwave Primary Colors
-val NeonPink = Color(0xFFFF00FF)        // Hot magenta
-val CyberPurple = Color(0xFF9D4EDD)     // Deep purple
-val DarkCyan = Color(0xFF00D9FF)        // Cyber cyan
-val NeonBlue = Color(0xFF0066FF)        // Electric blue
-val LimeLime = Color(0xFFD4FF00)        // Neon lime
+// TorBox Dark Theme - Black & Green
+val TorBoxGreen = Color(0xFF00C853)        // Primary green
+val TorBoxGreenLight = Color(0xFF69F0AE)   // Light green for accents
+val TorBoxGreenDark = Color(0xFF00A344)    // Darker green
 
-// Vaporwave Backgrounds
-val VapDarkBg = Color(0xFF0A0A1A)       // Very dark purple-black
-val VapSolidBg = Color(0xFF1a0a2a)      // Darker purple
-val VapGradientLight = Color(0xFF2D1B4E) // Medium-dark purple
+// Dark backgrounds
+val TorBoxBlack = Color(0xFF000000)        // Pure black
+val TorBoxDarkGray = Color(0xFF0D0D0D)     // Near black
+val TorBoxSurface = Color(0xFF1A1A1A)      // Dark surface
+val TorBoxCard = Color(0xFF242424)         // Card background
 
-// Text Colors
-val VapText = Color(0xFFFFFFFF)         // White
-val VapTextSecondary = Color(0xFFB0B0B0) // Gray
+// Text colors
+val TorBoxText = Color(0xFFFFFFFF)         // White text
+val TorBoxTextSecondary = Color(0xFFB0B0B0) // Gray text
+val TorBoxTextMuted = Color(0xFF808080)    // Muted text
 
-// Accent Colors
-val VapAccent1 = Color(0xFFFF006E)      // Hot pink
-val VapAccent2 = Color(0xFF8338EC)      // Purple
-val VapAccent3 = Color(0xFF3A86FF)      // Blue
+// Accent colors
+val TorBoxAccent = TorBoxGreen
+val TorBoxAccentLight = TorBoxGreenLight
 
-// Status Colors
-val VapSuccess = Color(0xFF39FF14)      // Neon green
-val VapWarning = Color(0xFFFFBF00)      // Gold
-val VapError = Color(0xFFFF0040)        // Bright red
+// Status colors
+val TorBoxSuccess = Color(0xFF00C853)      // Green
+val TorBoxWarning = Color(0xFFFFB300)      // Amber
+val TorBoxError = Color(0xFFFF1744)        // Red
+
+// Keep old names for compatibility - map to new theme
+val NeonPink = TorBoxGreen
+val CyberPurple = TorBoxCard
+val DarkCyan = TorBoxGreenLight
+val NeonBlue = TorBoxGreen
+val LimeLime = TorBoxGreenLight
+
+val VapDarkBg = TorBoxDarkGray
+val VapSolidBg = TorBoxSurface
+val VapGradientLight = TorBoxCard
+
+val VapText = TorBoxText
+val VapTextSecondary = TorBoxTextSecondary
+
+val VapAccent1 = TorBoxGreen
+val VapAccent2 = TorBoxGreenLight
+val VapAccent3 = TorBoxGreenDark
+
+val VapSuccess = TorBoxSuccess
+val VapWarning = TorBoxWarning
+val VapError = TorBoxError

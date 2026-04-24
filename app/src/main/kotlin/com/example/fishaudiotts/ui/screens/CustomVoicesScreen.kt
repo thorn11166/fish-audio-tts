@@ -39,11 +39,12 @@ import androidx.compose.ui.unit.sp
 import com.example.fishaudiotts.data.db.VoiceEntity
 import com.example.fishaudiotts.ui.components.VaporwaveButton
 import com.example.fishaudiotts.ui.components.VaporwaveCard
-import com.example.fishaudiotts.ui.theme.CyberPurple
-import com.example.fishaudiotts.ui.theme.DarkCyan
-import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapDarkBg
-import com.example.fishaudiotts.ui.theme.VapText
+import com.example.fishaudiotts.ui.theme.TorBoxBlack
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxGreen
+import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
+import com.example.fishaudiotts.ui.theme.TorBoxText
+import com.example.fishaudiotts.ui.theme.TorBoxTextSecondary
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -88,7 +89,7 @@ fun CustomVoicesScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = NeonPink
+                        tint = TorBoxGreen
                     )
                 }
 
@@ -96,7 +97,7 @@ fun CustomVoicesScreen(
                     text = "⭐ My Voices",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -106,7 +107,7 @@ fun CustomVoicesScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add voice",
-                            tint = DarkCyan
+                            tint = TorBoxGreenLight
                         )
                     }
                 }
@@ -115,7 +116,7 @@ fun CustomVoicesScreen(
             Text(
                 text = "${voiceList.size}/5 Favorites Saved",
                 fontSize = 12.sp,
-                color = DarkCyan,
+                color = TorBoxGreenLight,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -137,7 +138,7 @@ fun CustomVoicesScreen(
                         text = "Add Voice by ID",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NeonPink,
+                        color = TorBoxGreen,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
@@ -148,12 +149,12 @@ fun CustomVoicesScreen(
                         placeholder = { Text("Paste voice ID here...") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NeonPink,
-                            unfocusedBorderColor = CyberPurple,
-                            focusedTextColor = VapText,
-                            unfocusedTextColor = VapText,
-                            focusedLabelColor = DarkCyan,
-                            unfocusedLabelColor = DarkCyan
+                            focusedBorderColor = TorBoxGreen,
+                            unfocusedBorderColor = TorBoxCard,
+                            focusedTextColor = TorBoxText,
+                            unfocusedTextColor = TorBoxText,
+                            focusedLabelColor = TorBoxGreenLight,
+                            unfocusedLabelColor = TorBoxGreenLight
                         )
                     )
 
@@ -166,12 +167,12 @@ fun CustomVoicesScreen(
                             .fillMaxWidth()
                             .padding(top = 8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NeonPink,
-                            unfocusedBorderColor = CyberPurple,
-                            focusedTextColor = VapText,
-                            unfocusedTextColor = VapText,
-                            focusedLabelColor = DarkCyan,
-                            unfocusedLabelColor = DarkCyan
+                            focusedBorderColor = TorBoxGreen,
+                            unfocusedBorderColor = TorBoxCard,
+                            focusedTextColor = TorBoxText,
+                            unfocusedTextColor = TorBoxText,
+                            focusedLabelColor = TorBoxGreenLight,
+                            unfocusedLabelColor = TorBoxGreenLight
                         )
                     )
 
@@ -183,7 +184,7 @@ fun CustomVoicesScreen(
                         Button(
                             onClick = { showAddDialog = false },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = CyberPurple
+                                containerColor = TorBoxCard
                             ),
                             modifier = Modifier.weight(1f)
                         ) {
@@ -203,7 +204,7 @@ fun CustomVoicesScreen(
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = NeonPink
+                                containerColor = TorBoxGreen
                             ),
                             modifier = Modifier
                                 .weight(1f)
@@ -234,13 +235,13 @@ fun CustomVoicesScreen(
                         Text(
                             text = "No favorite voices yet",
                             fontSize = 16.sp,
-                            color = VapText,
+                            color = TorBoxText,
                             modifier = Modifier.padding(24.dp)
                         )
                         Text(
                             text = "Tap + to add by ID or visit Voice Discovery",
                             fontSize = 12.sp,
-                            color = DarkCyan,
+                            color = TorBoxGreenLight,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -294,21 +295,21 @@ private fun VoiceListItem(
                     text = voice.nickname,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NeonPink,
+                    color = TorBoxGreen,
                     modifier = Modifier.weight(1f)
                 )
 
                 if (isDefault) {
                     Box(
                         modifier = Modifier
-                            .background(NeonPink, androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+                            .background(TorBoxGreen, androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = "DEFAULT",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = VapDarkBg
+                            color = TorBoxBlack
                         )
                     }
                 }
@@ -318,7 +319,7 @@ private fun VoiceListItem(
             Text(
                 text = "ID: ${voice.referenceId}",
                 fontSize = 11.sp,
-                color = VapText.copy(alpha = 0.6f),
+                color = TorBoxText.copy(alpha = 0.6f),
                 modifier = Modifier.padding(top = 4.dp)
             )
 
@@ -327,7 +328,7 @@ private fun VoiceListItem(
                 Text(
                     text = "Emotion: ${voice.emotion}",
                     fontSize = 13.sp,
-                    color = DarkCyan,
+                    color = TorBoxGreenLight,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -343,14 +344,14 @@ private fun VoiceListItem(
                 IconButton(
                     onClick = onPlay,
                     modifier = Modifier.background(
-                        if (isPlaying) NeonPink.copy(alpha = 0.3f) else CyberPurple.copy(alpha = 0.3f),
+                        if (isPlaying) TorBoxGreen.copy(alpha = 0.3f) else TorBoxCard.copy(alpha = 0.3f),
                         androidx.compose.foundation.shape.CircleShape
                     )
                 ) {
                     Icon(
                         imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                         contentDescription = if (isPlaying) "Stop" else "Preview",
-                        tint = if (isPlaying) NeonPink else DarkCyan
+                        tint = if (isPlaying) TorBoxGreen else TorBoxGreenLight
                     )
                 }
 
@@ -371,14 +372,14 @@ private fun VoiceListItem(
                 IconButton(
                     onClick = onRemove,
                     modifier = Modifier.background(
-                        NeonPink.copy(alpha = 0.2f),
+                        TorBoxGreen.copy(alpha = 0.2f),
                         androidx.compose.foundation.shape.CircleShape
                     )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Remove",
-                        tint = NeonPink
+                        tint = TorBoxGreen
                     )
                 }
             }
