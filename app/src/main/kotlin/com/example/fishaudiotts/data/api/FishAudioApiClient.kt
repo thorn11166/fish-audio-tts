@@ -126,27 +126,48 @@ class FishAudioApiClient(
     }
 
     /**
-     * Search voices from Fish Audio library
-     *
-     * @param query Search query string
-     * @param page Page number for pagination
-     * @param perPage Number of results per page
-     * @return VoiceListResponse containing voices and pagination info
+     * List all available voice models from Fish Audio
+     * 
+     * @param pageSize Number of models per page
+     * @param pageNumber Page number (1-based)
+     * @param title Filter by title (optional)
+     * @param tag Filter by tag (optional)
+     * @return ModelListResponse containing models and pagination info
      */
-    suspend fun searchVoices(
-        query: String? = null,
-        page: Int = 1,
-        perPage: Int = 20
-    ): com.example.fishaudiotts.data.api.models.VoiceListResponse {
+    suspend fun listModels(
+        pageSize: Int = 20,
+        pageNumber: Int = 1,
+        title: String? = null,
+        tag: String? = null
+    ): com.example.fishaudiotts.data.api.models.ModelListResponse {
         return try {
-            service.searchVoices(
+            service.listModels(
                 authorization = "Bearer $apiKey",
-                query = query,
-                page = page,
-                perPage = perPage
+                pageSize = pageSize,
+                pageNumber = pageNumber,
+                title = title,
+                tag = tag
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Voice search failed: ${e.message}", e)
+            Log.e(TAG, "List models failed: ${e.message}", e)
+            throw e
+        }
+    }
+
+    /**
+     * Get specific model details
+     * 
+     * @param modelId The model ID
+     * @return FishAudioModel with full details
+     */
+    suspend fun getModel(modelId: String): com.example.fishaudiotts.data.api.models.FishAudioModel {
+        return try {
+            service.getModel(
+                authorization = "Bearer $apiKey",
+                modelId = modelId
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Get model failed: ${e.message}", e)
             throw e
         }
     }

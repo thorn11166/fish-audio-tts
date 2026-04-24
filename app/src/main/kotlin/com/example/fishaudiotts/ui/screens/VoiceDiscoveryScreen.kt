@@ -59,23 +59,28 @@ fun VoiceDiscoveryScreen(
     val currentlyPlayingVoiceId by viewModel.currentlyPlayingVoiceId.collectAsState()
     val favoriteVoices by viewModel.favoriteVoices.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val isApiConfigured by viewModel.isApiConfigured.collectAsState()
 
     // Get set of favorite voice IDs for quick lookup
     val favoriteVoiceIds = remember(favoriteVoices) {
         favoriteVoices.map { it.id }.toSet()
     }
 
-    // Load voices on first launch
+    // Load voices on first launch (only if API is configured)
     LaunchedEffect(Unit) {
-        logger.d("VoiceDiscoveryScreen", "Screen launched")
-        viewModel.searchVoices("")
+        logger.d("VoiceDiscoveryScreen", "Screen launched, isApiConfigured: $isApiConfigured")
+        if (isApiConfigured) {
+            viewModel.searchVoices("")
+        }
     }
 
-    // Debounced search
+    // Debounced search (only if API is configured)
     LaunchedEffect(searchQuery) {
-        logger.d("VoiceDiscoveryScreen", "Search query changed: '$searchQuery'")
-        kotlinx.coroutines.delay(300) // 300ms debounce
-        viewModel.searchVoices(searchQuery)
+        if (isApiConfigured) {
+            logger.d("VoiceDiscoveryScreen", "Search query changed: '$searchQuery'")
+            kotlinx.coroutines.delay(300) // 300ms debounce
+            viewModel.searchVoices(searchQuery)
+        }
     }
 
     Column(
@@ -127,15 +132,25 @@ fun VoiceDiscoveryScreen(
                     focusedTextColor = VapText,
                     unfocusedTextColor = VapText
                 ),
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                enabled = isApiConfigured
             )
 
-            Text(
-                text = if (isSearching) "Searching..." else "${searchResults.size} voice${if (searchResults.size != 1) "s" else ""} found",
-                fontSize = 12.sp,
-                color = DarkCyan,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+            if (!isApiConfigured) {
+                Text(
+                    text = "⚠️ API key required to browse voices. Add your key in Settings.",
+                    fontSize = 12.sp,
+                    color = NeonPink,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            } else {
+                Text(
+                    text = if (isSearching) "Searching..." else "${searchResults.size} voice${if (searchResults.size != 1) "s" else ""} found",
+                    fontSize = 12.sp,
+                    color = DarkCyan,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
 
             // Error message
             errorMessage?.let { error ->

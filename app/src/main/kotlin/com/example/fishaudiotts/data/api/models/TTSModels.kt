@@ -36,7 +36,41 @@ data class ProsodyControl(
 )
 
 /**
- * Voice model metadata from Fish Audio
+ * Fish Audio Model - represents a voice model from the API
+ */
+data class FishAudioModel(
+    @SerializedName("_id")
+    val id: String,
+    val type: String? = null,  // "svc" or "tts"
+    val title: String? = null,
+    val description: String? = null,
+    @SerializedName("cover_image")
+    val coverImage: String? = null,
+    val tags: List<String>? = null,
+    @SerializedName("train_mode")
+    val trainMode: String? = null,  // "fast" or "full"
+    val status: String? = null,
+    @SerializedName("is_public")
+    val isPublic: Boolean? = null,
+    val likes: Int? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null
+)
+
+/**
+ * Response from listing models
+ */
+data class ModelListResponse(
+    val items: List<FishAudioModel>? = null,
+    val total: Int? = null,
+    @SerializedName("page_size")
+    val pageSize: Int? = null,
+    @SerializedName("page_number")
+    val pageNumber: Int? = null
+)
+
+/**
+ * Legacy VoiceModel for demo voices and compatibility
  */
 data class VoiceModel(
     val id: String,
@@ -48,7 +82,7 @@ data class VoiceModel(
 )
 
 /**
- * Voice search/discovery response
+ * Legacy Voice search/discovery response
  */
 data class VoiceListResponse(
     val voices: List<VoiceModel>,

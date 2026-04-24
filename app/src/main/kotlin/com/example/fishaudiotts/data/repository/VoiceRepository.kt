@@ -164,14 +164,24 @@ class VoiceRepository(
     }
 
     /**
-     * Search voices from Fish Audio library
+     * Search/list voices from Fish Audio API
+     * Uses the /model endpoint which requires API authentication
      */
-    suspend fun searchVoices(query: String? = null, page: Int = 1, perPage: Int = 20): Result<com.example.fishaudiotts.data.api.models.VoiceListResponse> {
+    suspend fun listVoices(
+        query: String? = null,
+        pageNumber: Int = 1,
+        pageSize: Int = 20
+    ): Result<List<com.example.fishaudiotts.data.api.models.FishAudioModel>> {
         return try {
-            val response = apiClient.searchVoices(query = query, page = page, perPage = perPage)
-            Result.success(response)
+            val response = apiClient.listModels(
+                pageSize = pageSize,
+                pageNumber = pageNumber,
+                title = query,
+                tag = null
+            )
+            Result.success(response.items ?: emptyList())
         } catch (e: Exception) {
-            Log.e(TAG, "Voice search failed: ${e.message}", e)
+            Log.e(TAG, "Voice list failed: ${e.message}", e)
             Result.failure(e)
         }
     }

@@ -232,41 +232,62 @@ class SharedViewModel(context: Context) : ViewModel() {
         _errorMessage.value = null
     }
 
-    // Demo voices as fallback when API search fails
-    private val demoVoices = listOf(
-        VoiceModel("8ef4a238714b45718ce04243307c57a7", "E-girl", "Young, energetic female voice", listOf("english", "female"), "en", "cheerful"),
-        VoiceModel("802e3bc2b27e49c2995d23ef70e6ac89", "Energetic Male", "Upbeat, motivated male voice", listOf("english", "male"), "en", "happy"),
-        VoiceModel("933563129e564b19a115bedd57b7406a", "Sarah", "Professional, calm female voice", listOf("english", "female"), "en", "neutral"),
-        VoiceModel("bf322df2096a46f18c579d0baa36f41d", "Adrian", "Deep, authoritative male voice", listOf("english", "male"), "en", "serious"),
-        VoiceModel("b347db033a6549378b48d00acb0d06cd", "Selene", "Mystical, soothing female voice", listOf("english", "female"), "en", "calm")
-    )
-
     /**
-     * Search voices - falls back to demo voices since Fish Audio doesn't have a voice search API
+     * Search voices from Fish Audio API using the /model endpoint
+     * Requires API authentication
      */
     fun searchVoices(query: String = "") {
         viewModelScope.launch {
             logger.d("SharedViewModel", "searchVoices called with query: '$query'")
+            logger.d("SharedViewModel", "isApiConfigured: ${_isApiConfigured.value}")
+
+            if (!_isApiConfigured.value) {
+                logger.w("SharedViewModel", "API not configured, cannot search")
+                _errorMessage.value = "API key required to browse voices"
+                return@launch
+            }
+
+            // Initialize repository if needed
+            val apiKey = preferencesManager.getApiKey()
+            if (repository == null && !apiKey.isNullOrEmpty()) {
+                logger.d("SharedViewModel", "Initializing repository...")
+                initRepository(apiKey)
+            }
+
+            val repo = repository
+            if (repo == null) {
+                logger.e("SharedViewModel", "Repository is null")
+                _errorMessage.value = "Repository not initialized"
+                return@launch
+            }
 
             _isSearching.value = true
             _errorMessage.value = null
 
             try {
-                // Filter demo voices based on query
-                val filtered = if (query.isEmpty()) {
-                    demoVoices
-                } else {
-                    demoVoices.filter {
-                        it.name.contains(query, ignoreCase = true) ||
-                        it.description?.contains(query, ignoreCase = true) == true
+                val result = repo.listVoices(
+                    query = query.ifEmpty { null },
+                    pageNumber = 1,
+                    pageSize = 20
+                )
+                result.onSuccess { models ->
+                    logger.d("SharedViewModel", "API returned ${models.size} models")
+                    // Convert FishAudioModel to VoiceModel for UI
+                    val voices = models.map { model ->
+                        VoiceModel(
+                            id = model.id,
+                            name = model.title ?: "Unknown",
+                            description = model.description,
+                            tags = model.tags,
+                            language = null,
+                            emotion = null
+                        )
                     }
+                    _searchResults.value = voices
+                }.onFailure { error ->
+                    logger.e("SharedViewModel", "Search failed: ${error.message}", error)
+                    _errorMessage.value = "Search failed: ${error.message}"
                 }
-
-                logger.d("SharedViewModel", "Showing ${filtered.size} demo voices")
-                _searchResults.value = filtered
-
-                // Note: Fish Audio doesn't have a public voice search API
-                // Using curated demo voices instead
             } catch (e: Exception) {
                 logger.e("SharedViewModel", "Search error", e)
                 _errorMessage.value = "Search error: ${e.message}"
