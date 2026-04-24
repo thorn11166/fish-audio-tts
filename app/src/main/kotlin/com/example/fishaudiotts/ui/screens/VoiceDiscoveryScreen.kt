@@ -62,7 +62,7 @@ fun VoiceDiscoveryScreen(
 
     // Get set of favorite voice IDs for quick lookup
     val favoriteVoiceIds = remember(favoriteVoices) {
-        favoriteVoices.map { it.voiceId }.toSet()
+        favoriteVoices.map { it.id }.toSet()
     }
 
     // Load voices on first launch
@@ -192,12 +192,5 @@ fun VoiceDiscoveryScreen(
             }
         }
 
-        // Show added message
-        addedVoiceMessage?.let { message ->
-            LaunchedEffect(message) {
-                kotlinx.coroutines.delay(2000)
-                addedVoiceMessage = null
-            }
-        }
     }
 }
