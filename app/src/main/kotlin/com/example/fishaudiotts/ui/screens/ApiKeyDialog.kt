@@ -118,7 +118,10 @@ fun ApiKeyDialog(
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Later")
+                        Text(
+                            text = "Later",
+                            color = TorBoxText
+                        )
                     }
 
                     Spacer(modifier = Modifier.padding(horizontal = 8.dp))
@@ -136,7 +139,10 @@ fun ApiKeyDialog(
                         modifier = Modifier.weight(1f),
                         enabled = apiKey.isNotBlank()
                     ) {
-                        Text("Save")
+                        Text(
+                            text = "Save",
+                            color = TorBoxBlack
+                        )
                     }
                 }
             }
