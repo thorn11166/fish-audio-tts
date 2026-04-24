@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
                 val isApiConfigured by sharedViewModel.isApiConfigured.collectAsState()
                 val favoriteVoices by sharedViewModel.favoriteVoices.collectAsState()
                 val defaultVoice by sharedViewModel.defaultVoice.collectAsState()
+                val currentlyPlayingVoiceId by sharedViewModel.currentlyPlayingVoiceId.collectAsState()
                 
                 // Set up settings change listener to refresh main screen
                 LaunchedEffect(Unit) {
@@ -113,6 +114,7 @@ class MainActivity : ComponentActivity() {
                         CustomVoicesScreen(
                             voices = kotlinx.coroutines.flow.flowOf(favoriteVoices),
                             defaultVoiceId = defaultVoice?.id,
+                            currentlyPlayingVoiceId = currentlyPlayingVoiceId,
                             onNavigateBack = {
                                 navController.navigateUp()
                             },
@@ -127,6 +129,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onPlayVoice = { voiceId ->
                                 sharedViewModel.playVoicePreview(voiceId)
+                            },
+                            onStopVoice = {
+                                sharedViewModel.stopVoicePreview()
                             }
                         )
                     }

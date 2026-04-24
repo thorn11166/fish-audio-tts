@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -54,11 +55,13 @@ import kotlinx.coroutines.flow.flowOf
 fun CustomVoicesScreen(
     voices: Flow<List<VoiceEntity>> = flowOf(emptyList()),
     defaultVoiceId: String? = null,
+    currentlyPlayingVoiceId: String? = null,
     onNavigateBack: () -> Unit = {},
     onSetDefault: (String) -> Unit = {},
     onRemoveVoice: (String) -> Unit = {},
     onAddVoiceById: (String, String) -> Unit = { _, _ -> },
-    onPlayVoice: (String) -> Unit = {}
+    onPlayVoice: (String) -> Unit = {},
+    onStopVoice: () -> Unit = {}
 ) {
     val voiceList by voices.collectAsState(initial = emptyList())
     var showAddDialog by remember { mutableStateOf(false) }
@@ -148,7 +151,9 @@ fun CustomVoicesScreen(
                             focusedBorderColor = NeonPink,
                             unfocusedBorderColor = CyberPurple,
                             focusedTextColor = VapText,
-                            unfocusedTextColor = VapText
+                            unfocusedTextColor = VapText,
+                            focusedLabelColor = DarkCyan,
+                            unfocusedLabelColor = DarkCyan
                         )
                     )
 
@@ -164,7 +169,9 @@ fun CustomVoicesScreen(
                             focusedBorderColor = NeonPink,
                             unfocusedBorderColor = CyberPurple,
                             focusedTextColor = VapText,
-                            unfocusedTextColor = VapText
+                            unfocusedTextColor = VapText,
+                            focusedLabelColor = DarkCyan,
+                            unfocusedLabelColor = DarkCyan
                         )
                     )
 
@@ -240,12 +247,20 @@ fun CustomVoicesScreen(
                 }
             } else {
                 voiceList.forEach { voice ->
+                    val isPlaying = currentlyPlayingVoiceId == voice.referenceId
                     VoiceListItem(
                         voice = voice,
                         isDefault = voice.id == defaultVoiceId,
+                        isPlaying = isPlaying,
                         onSetDefault = { onSetDefault(voice.id) },
                         onRemove = { onRemoveVoice(voice.id) },
-                        onPlay = { onPlayVoice(voice.referenceId) }
+                        onPlay = { 
+                            if (isPlaying) {
+                                onStopVoice()
+                            } else {
+                                onPlayVoice(voice.referenceId)
+                            }
+                        }
                     )
                 }
             }
@@ -257,6 +272,7 @@ fun CustomVoicesScreen(
 private fun VoiceListItem(
     voice: VoiceEntity,
     isDefault: Boolean,
+    isPlaying: Boolean = false,
     onSetDefault: () -> Unit,
     onRemove: () -> Unit,
     onPlay: () -> Unit
@@ -323,18 +339,18 @@ private fun VoiceListItem(
                     .padding(top = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Play button
+                // Play/Pause button
                 IconButton(
                     onClick = onPlay,
                     modifier = Modifier.background(
-                        CyberPurple.copy(alpha = 0.3f),
+                        if (isPlaying) NeonPink.copy(alpha = 0.3f) else CyberPurple.copy(alpha = 0.3f),
                         androidx.compose.foundation.shape.CircleShape
                     )
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Preview",
-                        tint = DarkCyan
+                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = if (isPlaying) "Stop" else "Preview",
+                        tint = if (isPlaying) NeonPink else DarkCyan
                     )
                 }
 

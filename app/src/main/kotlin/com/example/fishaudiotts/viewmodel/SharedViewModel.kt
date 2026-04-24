@@ -149,23 +149,26 @@ class SharedViewModel(context: Context) : ViewModel() {
             val apiKey = preferencesManager.getApiKey()
             _isApiConfigured.value = !apiKey.isNullOrEmpty()
 
-            // Initialize repository
-            if (!apiKey.isNullOrEmpty()) {
-                initRepository(apiKey)
-
-                // Load default voice
-                repository?.getDefaultVoice()?.collect { voice ->
-                    _defaultVoice.value = voice
-                }
-            } else {
-                // Still need repository for local database operations
-                initRepository("")
-            }
+            // Initialize repository - always needed for database operations
+            initRepository(apiKey ?: "")
+            logger.d("SharedViewModel", "Repository initialized")
 
             _currentTtsModel.value = preferencesManager.getTtsModel()
 
-            // Load favorite voices
-            loadFavoriteVoices()
+            // Load favorite voices from database
+            logger.d("SharedViewModel", "Loading favorite voices...")
+            repository?.getAllFavoriteVoices()?.collect { voices ->
+                logger.d("SharedViewModel", "Loaded ${voices.size} favorite voices")
+                _favoriteVoices.value = voices
+            }
+        }
+
+        viewModelScope.launch {
+            // Load default voice
+            repository?.getDefaultVoice()?.collect { voice ->
+                logger.d("SharedViewModel", "Default voice: ${voice?.nickname}")
+                _defaultVoice.value = voice
+            }
         }
     }
 
