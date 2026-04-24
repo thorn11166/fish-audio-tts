@@ -12,6 +12,7 @@ import com.example.fishaudiotts.data.api.FishAudioApiClient
 import com.example.fishaudiotts.data.db.AppDatabase
 import com.example.fishaudiotts.data.repository.VoiceRepository
 import com.example.fishaudiotts.util.PreferencesManager
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
