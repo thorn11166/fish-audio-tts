@@ -104,9 +104,10 @@ class SharedViewModel(context: Context) : ViewModel() {
             }
 
             val voice = VoiceEntity(
-                voiceId = voiceId,
+                id = voiceId, // Use voiceId as the primary key
                 nickname = nickname,
-                description = description,
+                referenceId = voiceId,
+                emotion = "",
                 isDefault = _favoriteVoices.value.isEmpty() // First voice becomes default
             )
 

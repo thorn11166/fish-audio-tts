@@ -111,8 +111,8 @@ class MainActivity : ComponentActivity() {
 
                     composable("custom_voices") {
                         CustomVoicesScreen(
-                            voices = favoriteVoices,
-                            defaultVoiceId = defaultVoice?.voiceId,
+                            voices = kotlinx.coroutines.flow.flowOf(favoriteVoices),
+                            defaultVoiceId = defaultVoice?.id,
                             onNavigateBack = {
                                 navController.navigateUp()
                             },

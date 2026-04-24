@@ -242,10 +242,10 @@ fun CustomVoicesScreen(
                 voiceList.forEach { voice ->
                     VoiceListItem(
                         voice = voice,
-                        isDefault = voice.voiceId == defaultVoiceId,
-                        onSetDefault = { onSetDefault(voice.voiceId) },
-                        onRemove = { onRemoveVoice(voice.voiceId) },
-                        onPlay = { onPlayVoice(voice.voiceId) }
+                        isDefault = voice.id == defaultVoiceId,
+                        onSetDefault = { onSetDefault(voice.id) },
+                        onRemove = { onRemoveVoice(voice.id) },
+                        onPlay = { onPlayVoice(voice.referenceId) }
                     )
                 }
             }
@@ -300,16 +300,16 @@ private fun VoiceListItem(
 
             // Voice ID
             Text(
-                text = "ID: ${voice.voiceId}",
+                text = "ID: ${voice.referenceId}",
                 fontSize = 11.sp,
                 color = VapText.copy(alpha = 0.6f),
                 modifier = Modifier.padding(top = 4.dp)
             )
 
-            // Description if available
-            if (voice.description.isNotEmpty()) {
+            // Emotion if available
+            if (voice.emotion.isNotEmpty()) {
                 Text(
-                    text = voice.description,
+                    text = "Emotion: ${voice.emotion}",
                     fontSize = 13.sp,
                     color = DarkCyan,
                     modifier = Modifier.padding(top = 8.dp)
