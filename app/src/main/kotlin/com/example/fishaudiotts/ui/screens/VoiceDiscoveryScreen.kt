@@ -47,17 +47,23 @@ import com.example.fishaudiotts.viewmodel.SharedViewModel
 fun VoiceDiscoveryScreen(
     viewModel: SharedViewModel,
     onNavigateBack: () -> Unit,
-    onFavoriteVoice: (String, String) -> Unit = { _, _ -> }
+    onAddToFavorites: (String, String, String) -> Unit
 ) {
     val context = LocalContext.current
     val logger = remember { FileLogger.getInstance(context) }
     var searchQuery by remember { mutableStateOf("") }
+    var addedVoiceMessage by remember { mutableStateOf<String?>(null) }
 
     val searchResults by viewModel.searchResults.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     val currentlyPlayingVoiceId by viewModel.currentlyPlayingVoiceId.collectAsState()
-    val isApiConfigured by viewModel.isApiConfigured.collectAsState()
+    val favoriteVoices by viewModel.favoriteVoices.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+
+    // Get set of favorite voice IDs for quick lookup
+    val favoriteVoiceIds = remember(favoriteVoices) {
+        favoriteVoices.map { it.voiceId }.toSet()
+    }
 
     // Load voices on first launch
     LaunchedEffect(Unit) {
@@ -166,6 +172,7 @@ fun VoiceDiscoveryScreen(
                 .padding(bottom = 16.dp)
         ) {
             items(searchResults) { voice ->
+                val isFavorite = favoriteVoiceIds.contains(voice.id)
                 VoicePreviewCard(
                     voiceName = voice.name,
                     description = voice.description ?: "No description",
@@ -173,12 +180,23 @@ fun VoiceDiscoveryScreen(
                         viewModel.playVoicePreview(voice.id)
                     },
                     onFavorite = {
-                        onFavoriteVoice(voice.id, voice.name)
+                        if (!isFavorite) {
+                            onAddToFavorites(voice.id, voice.name, voice.description ?: "")
+                            addedVoiceMessage = "Added ${voice.name} to favorites"
+                        }
                     },
                     isPlaying = currentlyPlayingVoiceId == voice.id,
-                    isFavorite = false,
+                    isFavorite = isFavorite,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
+            }
+        }
+
+        // Show added message
+        addedVoiceMessage?.let { message ->
+            LaunchedEffect(message) {
+                kotlinx.coroutines.delay(2000)
+                addedVoiceMessage = null
             }
         }
     }

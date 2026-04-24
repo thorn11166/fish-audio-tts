@@ -52,10 +52,94 @@ class SharedViewModel(context: Context) : ViewModel() {
     private val _currentlyPlayingVoiceId = MutableStateFlow<String?>(null)
     val currentlyPlayingVoiceId: StateFlow<String?> = _currentlyPlayingVoiceId
 
+    // Favorite voices
+    private val _favoriteVoices = MutableStateFlow<List<VoiceEntity>>(emptyList())
+    val favoriteVoices: StateFlow<List<VoiceEntity>> = _favoriteVoices
+
     private val audioPlayer = AudioPlayer(context)
 
     init {
         initializeApp()
+    }
+
+    /**
+     * Refresh API configuration (call when settings change)
+     */
+    fun refreshApiConfig() {
+        viewModelScope.launch {
+            val apiKey = preferencesManager.getApiKey()
+            _isApiConfigured.value = !apiKey.isNullOrEmpty()
+
+            if (!apiKey.isNullOrEmpty()) {
+                initRepository(apiKey)
+            }
+
+            // Reload favorite voices
+            loadFavoriteVoices()
+        }
+    }
+
+    /**
+     * Load favorite voices from database
+     */
+    private fun loadFavoriteVoices() {
+        viewModelScope.launch {
+            repository?.getAllFavoriteVoices()?.collect { voices ->
+                _favoriteVoices.value = voices
+            }
+        }
+    }
+
+    /**
+     * Add a voice to favorites
+     */
+    fun addFavoriteVoice(voiceId: String, nickname: String, description: String = "") {
+        viewModelScope.launch {
+            val repo = repository
+            if (repo == null) {
+                val apiKey = preferencesManager.getApiKey()
+                if (!apiKey.isNullOrEmpty()) {
+                    initRepository(apiKey)
+                }
+            }
+
+            val voice = VoiceEntity(
+                voiceId = voiceId,
+                nickname = nickname,
+                description = description,
+                isDefault = _favoriteVoices.value.isEmpty() // First voice becomes default
+            )
+
+            val result = repository?.addFavoriteVoice(voice)
+            if (result == true) {
+                logger.d("SharedViewModel", "Added voice to favorites: $voiceId")
+                loadFavoriteVoices()
+            } else {
+                _errorMessage.value = "Failed to add voice (max 5 favorites reached)"
+            }
+        }
+    }
+
+    /**
+     * Remove a voice from favorites
+     */
+    fun removeFavoriteVoice(voiceId: String) {
+        viewModelScope.launch {
+            repository?.removeFavoriteVoice(voiceId)
+            logger.d("SharedViewModel", "Removed voice from favorites: $voiceId")
+            loadFavoriteVoices()
+        }
+    }
+
+    /**
+     * Set a voice as the default
+     */
+    fun setDefaultVoice(voiceId: String) {
+        viewModelScope.launch {
+            repository?.setDefaultVoice(voiceId)
+            logger.d("SharedViewModel", "Set default voice: $voiceId")
+            loadFavoriteVoices()
+        }
     }
 
     private fun initializeApp() {
@@ -72,9 +156,15 @@ class SharedViewModel(context: Context) : ViewModel() {
                 repository?.getDefaultVoice()?.collect { voice ->
                     _defaultVoice.value = voice
                 }
+            } else {
+                // Still need repository for local database operations
+                initRepository("")
             }
 
             _currentTtsModel.value = preferencesManager.getTtsModel()
+
+            // Load favorite voices
+            loadFavoriteVoices()
         }
     }
 

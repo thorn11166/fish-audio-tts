@@ -47,6 +47,17 @@ class MainActivity : ComponentActivity() {
                 val settingsViewModel = SettingsViewModel(this@MainActivity)
                 
                 val isApiConfigured by sharedViewModel.isApiConfigured.collectAsState()
+                val favoriteVoices by sharedViewModel.favoriteVoices.collectAsState()
+                val defaultVoice by sharedViewModel.defaultVoice.collectAsState()
+                
+                // Set up settings change listener to refresh main screen
+                LaunchedEffect(Unit) {
+                    settingsViewModel.setSettingsChangeListener(object : SettingsViewModel.SettingsChangeListener {
+                        override fun onSettingsChanged() {
+                            sharedViewModel.refreshApiConfig()
+                        }
+                    })
+                }
                 
                 // Handle deep links from intent
                 LaunchedEffect(Unit) {
@@ -92,24 +103,30 @@ class MainActivity : ComponentActivity() {
                             onNavigateBack = {
                                 navController.navigateUp()
                             },
-                            onFavoriteVoice = { id, name ->
-                                // TODO: Add to favorites
+                            onAddToFavorites = { voiceId, voiceName, description ->
+                                sharedViewModel.addFavoriteVoice(voiceId, voiceName, description)
                             }
                         )
                     }
-                    
+
                     composable("custom_voices") {
                         CustomVoicesScreen(
-                            voices = kotlinx.coroutines.flow.flowOf(emptyList()),
-                            defaultVoiceId = null,
+                            voices = favoriteVoices,
+                            defaultVoiceId = defaultVoice?.voiceId,
                             onNavigateBack = {
                                 navController.navigateUp()
                             },
                             onSetDefault = { voiceId ->
-                                // TODO: Set default voice
+                                sharedViewModel.setDefaultVoice(voiceId)
                             },
                             onRemoveVoice = { voiceId ->
-                                // TODO: Remove voice
+                                sharedViewModel.removeFavoriteVoice(voiceId)
+                            },
+                            onAddVoiceById = { voiceId, nickname ->
+                                sharedViewModel.addFavoriteVoice(voiceId, nickname, "Custom voice")
+                            },
+                            onPlayVoice = { voiceId ->
+                                sharedViewModel.playVoicePreview(voiceId)
                             }
                         )
                     }

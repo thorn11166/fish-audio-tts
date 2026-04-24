@@ -14,7 +14,12 @@ import kotlinx.coroutines.launch
  */
 class SettingsViewModel(context: Context) : ViewModel() {
     
+    interface SettingsChangeListener {
+        fun onSettingsChanged()
+    }
+    
     private val preferencesManager = PreferencesManager(context)
+    private var changeListener: SettingsChangeListener? = null
     
     private val _apiKey = MutableStateFlow("")
     val apiKey: StateFlow<String> = _apiKey
@@ -128,6 +133,9 @@ class SettingsViewModel(context: Context) : ViewModel() {
                 preferencesManager.setLatencyMode(_latencyMode.value)
                 
                 _saveMessage.value = "Settings saved successfully!"
+                
+                // Notify listener that settings changed
+                notifySettingsChanged()
             } catch (e: Exception) {
                 _saveMessage.value = "Failed to save settings: ${e.message}"
             } finally {
@@ -138,5 +146,13 @@ class SettingsViewModel(context: Context) : ViewModel() {
     
     fun clearSaveMessage() {
         _saveMessage.value = null
+    }
+    
+    fun setSettingsChangeListener(listener: SettingsChangeListener?) {
+        changeListener = listener
+    }
+    
+    fun notifySettingsChanged() {
+        changeListener?.onSettingsChanged()
     }
 }
