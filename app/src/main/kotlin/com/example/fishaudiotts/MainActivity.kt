@@ -1,5 +1,6 @@
 package com.example.fishaudiotts
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,10 +8,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.fishaudiotts.ui.screens.ApiKeyDialog
 import com.example.fishaudiotts.ui.screens.CustomVoicesScreen
 import com.example.fishaudiotts.ui.screens.HomeScreen
 import com.example.fishaudiotts.ui.screens.LogsScreen
@@ -30,6 +35,21 @@ class MainActivity : ComponentActivity() {
     
     private lateinit var logger: FileLogger
     
+    companion object {
+        private const val PREFS_NAME = "fish_audio_prefs"
+        private const val KEY_FIRST_LAUNCH = "first_launch"
+        
+        fun isFirstLaunch(context: Context): Boolean {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(KEY_FIRST_LAUNCH, true)
+        }
+        
+        fun setFirstLaunchComplete(context: Context) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().putBoolean(KEY_FIRST_LAUNCH, false).apply()
+        }
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
@@ -39,6 +59,9 @@ class MainActivity : ComponentActivity() {
         // Initialize logger
         logger = FileLogger.getInstance(this)
         logger.i("MainActivity", "App starting...")
+        
+        // Check if this is the first launch
+        val isFirstLaunch = isFirstLaunch(this)
         
         setContent {
             FishAudioTTSTheme {
@@ -50,6 +73,28 @@ class MainActivity : ComponentActivity() {
                 val favoriteVoices by sharedViewModel.favoriteVoices.collectAsState()
                 val defaultVoice by sharedViewModel.defaultVoice.collectAsState()
                 val currentlyPlayingVoiceId by sharedViewModel.currentlyPlayingVoiceId.collectAsState()
+                
+                // Show first-run dialog if needed
+                var showApiKeyDialog by remember { 
+                    mutableStateOf(isFirstLaunch && !isApiConfigured) 
+                }
+                
+                // First-run API key dialog
+                if (showApiKeyDialog) {
+                    ApiKeyDialog(
+                        onSave = { apiKey ->
+                            // Save the API key
+                            settingsViewModel.updateApiKey(apiKey)
+                            settingsViewModel.saveSettings()
+                            setFirstLaunchComplete(this@MainActivity)
+                            showApiKeyDialog = false
+                        },
+                        onLater = {
+                            setFirstLaunchComplete(this@MainActivity)
+                            showApiKeyDialog = false
+                        }
+                    )
+                }
                 
                 // Set up settings change listener to refresh main screen
                 LaunchedEffect(Unit) {

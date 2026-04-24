@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +30,6 @@ import com.example.fishaudiotts.ui.components.VaporwaveCard
 import com.example.fishaudiotts.ui.theme.CyberPurple
 import com.example.fishaudiotts.ui.theme.DarkCyan
 import com.example.fishaudiotts.ui.theme.NeonPink
-import com.example.fishaudiotts.ui.theme.VapDarkBg
 import com.example.fishaudiotts.ui.theme.VapText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
 
@@ -71,12 +69,6 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold,
                     color = NeonPink,
                     modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = "Text to Speech with Vaporwave Vibes",
-                    fontSize = 14.sp,
-                    color = DarkCyan,
-                    fontWeight = FontWeight.Medium
                 )
             }
             
@@ -174,30 +166,6 @@ fun HomeScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Features Card
-            VaporwaveCard {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "✨ Features",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = CyberPurple,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-                    
-                    FeatureItem("🎨", "Vaporwave Theme", "Retro synthwave aesthetic with neon vibes")
-                    FeatureItem("🔊", "High Quality TTS", "Multiple voice models and audio formats")
-                    FeatureItem("⭐", "5 Favorite Voices", "Save and manage custom voice nicknames")
-                    FeatureItem("📱", "Deep Linking", "Integration with external apps")
-                    FeatureItem("🗄️", "Persistent Storage", "Room database for offline access")
-                    FeatureItem("🎙️", "Speech Control", "Adjust speed, volume, emotion and more")
-                }
-            }
-            
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -240,26 +208,5 @@ private fun VoiceNavButton(
                 color = if (enabled) VapText else VapText.copy(alpha = 0.3f)
             )
         }
-    }
-}
-
-@Composable
-private fun FeatureItem(emoji: String, title: String, description: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Text(
-            text = "$emoji $title",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = DarkCyan
-        )
-        Text(
-            text = description,
-            fontSize = 12.sp,
-            color = VapText.copy(alpha = 0.7f)
-        )
     }
 }
