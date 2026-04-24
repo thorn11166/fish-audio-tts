@@ -25,6 +25,20 @@
         android:theme="@style/Theme.FishAudioTTS"
         tools:targetApi="31">
 
+        <!-- TTS Engine Service -->
+        <service
+            android:name=".service.FishAudioTTSService"
+            android:exported="true"
+            android:label="Fish Audio TTS">
+            <intent-filter>
+                <action android:name="android.intent.action.TTS_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.speech.tts"
+                android:resource="@xml/tts_engine" />
+        </service>
+
         <!-- FileProvider for sharing logs -->
         <provider
             android:name="androidx.core.content.FileProvider"
