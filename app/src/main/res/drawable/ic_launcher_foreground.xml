@@ -7,56 +7,26 @@
     <!-- Fish body -->
     <path
         android:fillColor="#00C853"
-        android:pathData="M54,30
-                         C70,30 85,40 90,54
-                         C85,68 70,78 54,78
-                         C45,78 38,74 32,68
-                         L20,78
-                         L24,60
-                         C22,58 20,56 20,54
-                         C20,52 22,50 24,48
-                         L20,30
-                         L32,40
-                         C38,34 45,30 54,30Z"/>
+        android:pathData="M30,54 C30,38 45,28 60,28 C75,28 88,38 94,54 C88,70 75,80 60,80 C45,80 30,70 30,54 M30,54 L15,70 L18,54 L15,38 Z"/>
     <!-- Fish eye -->
-    <circle
+    <path
         android:fillColor="#000000"
-        android:cx="38"
-        android:cy="48"
-        android:r="4"/>
-    <circle
+        android:pathData="M42,48 A4,4 0 1,1 42,48.1"/>
+    <path
         android:fillColor="#FFFFFF"
-        android:cx="40"
-        android:cy="46"
-        android:r="1.5"/>
-    <!-- Microphone body -->
-    <rect
-        android:fillColor="#1A1A1A"
-        android:x="60"
-        android:y="44"
-        android:width="12"
-        android:height="20"
-        android:rx="6"/>
-    <!-- Microphone grille dots -->
-    <circle
-        android:fillColor="#00C853"
-        android:cx="66"
-        android:cy="50"
-        android:r="1.5"/>
-    <circle
-        android:fillColor="#00C853"
-        android:cy="56"
-        android:cx="66"
-        android:r="1.5"/>
-    <!-- Microphone stand -->
+        android:pathData="M43,47 A1.5,1.5 0 1,1 43,47.1"/>
+    <!-- Microphone -->
     <path
         android:fillColor="#1A1A1A"
-        android:pathData="M63,64 L69,64 L66,72 Z"/>
-    <rect
+        android:pathData="M65,40 L77,40 A6,6 0 0,1 83,46 L83,66 A6,6 0 0,1 77,72 L65,72 A6,6 0 0,1 59,66 L59,46 A6,6 0 0,1 65,40"/>
+    <!-- Microphone grille dots -->
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M71,50 A1.5,1.5 0 1,1 71,50.1"/>
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M71,56 A1.5,1.5 0 1,1 71,56.1"/>
+    <path
         android:fillColor="#1A1A1A"
-        android:x="62"
-        android:y="70"
-        android:width="8"
-        android:height="3"
-        android:rx="1"/>
+        android:pathData="M68,72 L74,72 L71,80 Z"/>
 </vector>
