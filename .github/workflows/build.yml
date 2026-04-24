@@ -31,7 +31,7 @@ jobs:
           packages: tools platform-tools
 
       - name: Decode Keystore
-        if: env.KEYSTORE_BASE64 != ''
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
@@ -76,7 +76,7 @@ jobs:
         run: ./gradlew test --stacktrace --info
 
       - name: Build Signed Release APK
-        if: env.KEYSTORE_BASE64 != ''
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -86,7 +86,7 @@ jobs:
         run: ./gradlew assembleRelease --stacktrace --info
 
       - name: Build Unsigned Release APK
-        if: env.KEYSTORE_BASE64 == ''
+        if: ${{ secrets.KEYSTORE_BASE64 == '' }}
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
         run: ./gradlew assembleRelease --stacktrace --info
