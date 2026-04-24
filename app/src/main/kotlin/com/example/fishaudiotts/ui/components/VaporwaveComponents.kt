@@ -37,8 +37,8 @@ import com.example.fishaudiotts.ui.theme.NeonBlue
 import com.example.fishaudiotts.ui.theme.TorBoxGreen
 import com.example.fishaudiotts.ui.theme.TorBoxBlack
 import com.example.fishaudiotts.ui.theme.VapError
-import com.example.fishaudiotts.ui.theme.VapGradientLight
-import com.example.fishaudiotts.ui.theme.VapSolidBg
+import com.example.fishaudiotts.ui.theme.TorBoxCard
+import com.example.fishaudiotts.ui.theme.TorBoxBlack
 import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.neonGradient
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
@@ -89,7 +89,7 @@ fun VaporwaveCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(VapSolidBg)
+            .background(TorBoxBlack)
             .border(
                 width = 2.dp,
                 brush = Brush.linearGradient(
@@ -187,7 +187,7 @@ fun VoicePreviewCard(
                         .size(48.dp)
                         .background(
                             brush = if (isPlaying) Brush.linearGradient(
-                                colors = listOf(TorBoxGreenLight, NeonBlue)
+                                colors = listOf(TorBoxGreenLight, TorBoxGreen)
                             ) else neonGradient,
                             shape = RoundedCornerShape(24.dp)
                         )
@@ -208,7 +208,7 @@ fun VoicePreviewCard(
                         .align(Alignment.CenterEnd)
                         .size(40.dp)
                         .background(
-                            color = if (isFavorite) TorBoxGreen else VapGradientLight,
+                            color = if (isFavorite) TorBoxGreen else TorBoxCard,
                             shape = RoundedCornerShape(20.dp)
                         )
                         .clickable(onClick = onFavorite),

@@ -113,7 +113,8 @@ fun ApiKeyDialog(
                     Button(
                         onClick = onLater,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = TorBoxCard
+                            containerColor = TorBoxCard,
+                            contentColor = TorBoxText
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
@@ -129,7 +130,8 @@ fun ApiKeyDialog(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = TorBoxGreen
+                            containerColor = TorBoxGreen,
+                            contentColor = TorBoxBlack
                         ),
                         modifier = Modifier.weight(1f),
                         enabled = apiKey.isNotBlank()
