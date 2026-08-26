@@ -9,6 +9,7 @@ import com.example.fishaudiotts.data.db.AppDatabase
 import com.example.fishaudiotts.data.db.VoiceEntity
 import com.example.fishaudiotts.data.repository.VoiceRepository
 import com.example.fishaudiotts.util.AudioPlayer
+import com.example.fishaudiotts.util.Constants
 import com.example.fishaudiotts.util.FileLogger
 import com.example.fishaudiotts.util.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
  */
 class SharedViewModel(context: Context) : ViewModel() {
 
+    private val appContext = context.applicationContext
     private val logger = FileLogger.getInstance(context)
     private val preferencesManager = PreferencesManager(context)
     private val database = AppDatabase.getInstance(context)
@@ -29,7 +31,7 @@ class SharedViewModel(context: Context) : ViewModel() {
     private val _isApiConfigured = MutableStateFlow(false)
     val isApiConfigured: StateFlow<Boolean> = _isApiConfigured
 
-    private val _currentTtsModel = MutableStateFlow("s2-pro")
+    private val _currentTtsModel = MutableStateFlow(Constants.MODEL_S2_1_PRO_FREE)
     val currentTtsModel: StateFlow<String> = _currentTtsModel
 
     private val _defaultVoice = MutableStateFlow<VoiceEntity?>(null)
@@ -116,7 +118,7 @@ class SharedViewModel(context: Context) : ViewModel() {
                 logger.d("SharedViewModel", "Added voice to favorites: $voiceId")
                 loadFavoriteVoices()
             } else {
-                _errorMessage.value = "Failed to add voice (max 5 favorites reached)"
+                _errorMessage.value = "Failed to add voice (max ${Constants.MAX_FAVORITE_VOICES} favorites reached)"
             }
         }
     }
@@ -176,7 +178,7 @@ class SharedViewModel(context: Context) : ViewModel() {
      * Initialize repository with API key
      */
     private fun initRepository(apiKey: String) {
-        val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel())
+        val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel(), appContext)
         repository = VoiceRepository(database, apiClient)
     }
 
@@ -219,7 +221,7 @@ class SharedViewModel(context: Context) : ViewModel() {
         if (_isApiConfigured.value) {
             val apiKey = preferencesManager.getApiKey()
             if (!apiKey.isNullOrEmpty()) {
-                val apiClient = FishAudioApiClient(apiKey, model)
+                val apiClient = FishAudioApiClient(apiKey, model, appContext)
                 repository = VoiceRepository(database, apiClient)
             }
         }

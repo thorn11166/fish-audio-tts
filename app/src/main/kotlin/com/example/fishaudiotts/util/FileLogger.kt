@@ -2,6 +2,8 @@ package com.example.fishaudiotts.util
 
 import android.content.Context
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -21,10 +23,11 @@ class FileLogger(private val context: Context) {
         private const val CRASH_FILE_NAME = "crash_logs.txt"
         private const val MAX_LOG_SIZE = 1024 * 1024 // 1MB
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
-        
+        private val gson = Gson()
+
         @Volatile
         private var instance: FileLogger? = null
-        
+
         fun getInstance(context: Context): FileLogger {
             return instance ?: synchronized(this) {
                 instance ?: FileLogger(context.applicationContext).also { instance = it }
@@ -47,7 +50,15 @@ class FileLogger(private val context: Context) {
             }
         }
     }
-    
+
+    private val requestLogFile: File by lazy {
+        File(context.cacheDir, Constants.REQUEST_LOG_FILE_NAME).also {
+            if (!it.exists()) {
+                it.writeText("[]")
+            }
+        }
+    }
+
     /**
      * Log a debug message
      */
@@ -207,7 +218,68 @@ class FileLogger(private val context: Context) {
             "Unknown"
         }
     }
+
+    /**
+     * Log a TTS API request with its outcome.
+     * Keeps only the last [Constants.MAX_REQUEST_LOGS] entries.
+     */
+    fun logRequest(entry: RequestLogEntry) {
+        try {
+            val logs = readRequestLogs().toMutableList()
+            logs.add(entry)
+            while (logs.size > Constants.MAX_REQUEST_LOGS) {
+                logs.removeAt(0)
+            }
+            requestLogFile.writeText(gson.toJson(logs))
+        } catch (e: Exception) {
+            Log.e("FileLogger", "Failed to log request", e)
+        }
+    }
+
+    /**
+     * Get all request logs with newest entry first.
+     */
+    fun getRequestLogs(): List<RequestLogEntry> {
+        return readRequestLogs().reversed()
+    }
+
+    /**
+     * Clear all request logs.
+     */
+    fun clearRequestLogs() {
+        try {
+            requestLogFile.writeText("[]")
+        } catch (e: Exception) {
+            Log.e("FileLogger", "Failed to clear request logs", e)
+        }
+    }
+
+    private fun readRequestLogs(): List<RequestLogEntry> {
+        return try {
+            if (!requestLogFile.exists()) return emptyList()
+            val type = object : TypeToken<List<RequestLogEntry>>() {}.type
+            gson.fromJson(requestLogFile.readText(), type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 }
+
+/**
+ * Data class representing a single TTS API request log entry.
+ */
+data class RequestLogEntry(
+    val timestamp: String,
+    val model: String,
+    val text: String,
+    val referenceId: String?,
+    val format: String,
+    val sampleRate: Int?,
+    val responseSize: Long?,
+    val durationMs: Long,
+    val success: Boolean,
+    val error: String?
+)
 
 /**
  * Global exception handler for uncaught exceptions

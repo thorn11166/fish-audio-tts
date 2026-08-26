@@ -49,7 +49,8 @@ data class FishAudioModel(
     val tags: List<String>? = null,
     @SerializedName("train_mode")
     val trainMode: String? = null,  // "fast" or "full"
-    val status: String? = null,
+    val state: String? = null,  // "created", "training", "trained", "failed"
+    val status: String? = null,  // legacy field kept for backward compatibility
     @SerializedName("is_public")
     val isPublic: Boolean? = null,
     val likes: Int? = null,

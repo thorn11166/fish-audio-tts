@@ -82,7 +82,7 @@ class PreferencesManager(private val context: Context) {
     }
     
     fun getTtsModel(): String {
-        return encryptedPrefs.getString(KEY_TTS_MODEL, Constants.MODEL_S2_PRO) ?: Constants.MODEL_S2_PRO
+        return encryptedPrefs.getString(KEY_TTS_MODEL, Constants.MODEL_S2_1_PRO_FREE) ?: Constants.MODEL_S2_1_PRO_FREE
     }
     
     // Voice Speed Management

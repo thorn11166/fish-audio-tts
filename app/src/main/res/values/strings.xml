@@ -14,7 +14,7 @@
     <string name="discover_voices">Discover Voices</string>
     <string name="discover_description">Browse and preview voices from Fish Audio library</string>
     <string name="my_voices">My Voices</string>
-    <string name="my_voices_description">Manage your 5 favorite voices</string>
+    <string name="my_voices_description">Manage your favorite voices</string>
     <string name="settings">Settings</string>
     <string name="settings_description">Configure API key and TTS parameters</string>
     
@@ -23,7 +23,7 @@
     <string name="feature_theme_desc">Retro synthwave aesthetic with neon vibes</string>
     <string name="feature_quality">High Quality TTS</string>
     <string name="feature_quality_desc">Multiple voice models and audio formats</string>
-    <string name="feature_voices">5 Favorite Voices</string>
+    <string name="feature_voices">15 Favorite Voices</string>
     <string name="feature_voices_desc">Save and manage custom voice nicknames</string>
     <string name="feature_linking">Deep Linking</string>
     <string name="feature_linking_desc">Integration with external apps</string>

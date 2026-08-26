@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.fishaudiotts.data.api.FishAudioApiClient
 import com.example.fishaudiotts.data.db.AppDatabase
 import com.example.fishaudiotts.data.db.VoiceEntity
+import com.example.fishaudiotts.util.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -20,14 +21,14 @@ class VoiceRepository(
 ) {
     companion object {
         private const val TAG = "VoiceRepository"
-        private const val MAX_FAVORITES = 5
+        private const val MAX_FAVORITES = Constants.MAX_FAVORITE_VOICES
     }
     
     private val voiceDao = database.voiceDao()
     
     /**
      * Add a voice to favorites
-     * Enforces max 5 favorite voices limit
+     * Enforces max favorite voices limit
      */
     suspend fun addFavoriteVoice(voice: VoiceEntity): Boolean {
         return try {
@@ -36,7 +37,7 @@ class VoiceRepository(
                 voiceDao.getVoiceCount().first()
             }
             
-            // Enforce 5-voice limit
+            // Enforce favorite voice limit
             if (count >= MAX_FAVORITES) {
                 Log.w(TAG, "Cannot add voice: maximum favorites ($MAX_FAVORITES) reached")
                 return false

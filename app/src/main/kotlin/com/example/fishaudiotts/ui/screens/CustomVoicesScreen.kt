@@ -46,11 +46,12 @@ import com.example.fishaudiotts.ui.theme.TorBoxGreenLight
 import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.TorBoxTextSecondary
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
+import com.example.fishaudiotts.util.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 /**
- * Custom Voices Screen - Manage up to 5 favorite voices
+ * Custom Voices Screen - Manage favorite voices
  */
 @Composable
 fun CustomVoicesScreen(
@@ -102,7 +103,7 @@ fun CustomVoicesScreen(
                 )
 
                 // Add button
-                if (voiceList.size < 5) {
+                if (voiceList.size < Constants.MAX_FAVORITE_VOICES) {
                     IconButton(onClick = { showAddDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -114,7 +115,7 @@ fun CustomVoicesScreen(
             }
 
             Text(
-                text = "${voiceList.size}/5 Favorites Saved",
+                text = "${voiceList.size}/${Constants.MAX_FAVORITE_VOICES} Favorites Saved",
                 fontSize = 12.sp,
                 color = TorBoxGreenLight,
                 modifier = Modifier.padding(top = 4.dp)

@@ -45,7 +45,7 @@ class FishAudioTTSService : TextToSpeechService() {
     private fun initRepository() {
         val apiKey = preferencesManager.getApiKey()
         if (!apiKey.isNullOrEmpty()) {
-            val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel())
+            val apiClient = FishAudioApiClient(apiKey, preferencesManager.getTtsModel(), applicationContext)
             repository = VoiceRepository(database, apiClient)
             Log.d(TAG, "Repository initialized")
         } else {

@@ -141,7 +141,7 @@ fun HomeScreen(
                     VoiceNavButton(
                         icon = Icons.Default.Favorite,
                         title = "My Voices",
-                        description = "Manage your 5 favorite voices",
+                        description = "Manage your favorite voices",
                         onClick = onNavigateToCustomVoices,
                         enabled = isApiConfigured
                     )

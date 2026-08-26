@@ -36,6 +36,7 @@ import com.example.fishaudiotts.ui.theme.TorBoxBlack
 import com.example.fishaudiotts.ui.theme.VapSolidBg
 import com.example.fishaudiotts.ui.theme.TorBoxText
 import com.example.fishaudiotts.ui.theme.vaporwaveGradient
+import com.example.fishaudiotts.util.Constants
 import com.example.fishaudiotts.viewmodel.SettingsViewModel
 
 /**
@@ -134,9 +135,14 @@ fun SettingsScreen(
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     
-                    listOf("s1", "s2-pro").forEach { model ->
+                    listOf(
+                        Constants.MODEL_S2_1_PRO_FREE to "S2.1 Pro Free (recommended)",
+                        Constants.MODEL_S2_1_PRO to "S2.1 Pro",
+                        Constants.MODEL_S2_PRO to "S2 Pro (legacy)",
+                        Constants.MODEL_S1 to "S1 (legacy)"
+                    ).forEach { (model, label) ->
                         ModelButton(
-                            label = model.uppercase(),
+                            label = label,
                             isSelected = ttsModel == model,
                             onClick = { viewModel.updateTtsModel(model) }
                         )

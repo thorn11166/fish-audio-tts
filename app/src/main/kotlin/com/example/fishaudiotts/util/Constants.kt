@@ -12,6 +12,8 @@ object Constants {
     // TTS Models
     const val MODEL_S1 = "s1"
     const val MODEL_S2_PRO = "s2-pro"
+    const val MODEL_S2_1_PRO = "s2.1-pro"
+    const val MODEL_S2_1_PRO_FREE = "s2.1-pro-free"
     
     // Audio Formats
     const val FORMAT_MP3 = "mp3"
@@ -36,7 +38,13 @@ object Constants {
     
     // Database
     const val DATABASE_NAME = "fish_audio_tts.db"
-    const val MAX_FAVORITE_VOICES = 5
+    const val MAX_FAVORITE_VOICES = 15
+    
+    // Debug
+    const val MAX_DEBUG_AUDIO_FILES = 50
+    const val MAX_REQUEST_LOGS = 100
+    const val DEBUG_AUDIO_DIR = "debug_audio"
+    const val REQUEST_LOG_FILE_NAME = "request_logs.json"
     
     // Deep Link Schemes
     const val DEEP_LINK_SCHEME = "fishaudiotts"

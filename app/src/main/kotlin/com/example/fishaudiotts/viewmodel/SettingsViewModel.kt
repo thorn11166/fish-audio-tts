@@ -3,6 +3,7 @@ package com.example.fishaudiotts.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fishaudiotts.util.Constants
 import com.example.fishaudiotts.util.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,7 @@ class SettingsViewModel(context: Context) : ViewModel() {
     private val _apiKey = MutableStateFlow("")
     val apiKey: StateFlow<String> = _apiKey
     
-    private val _ttsModel = MutableStateFlow("s2-pro")
+    private val _ttsModel = MutableStateFlow(Constants.MODEL_S2_1_PRO_FREE)
     val ttsModel: StateFlow<String> = _ttsModel
     
     private val _voiceSpeed = MutableStateFlow(1.0f)
